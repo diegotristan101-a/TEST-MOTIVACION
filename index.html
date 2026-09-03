@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EFEDE6">
+<meta name="robots" content="noindex">
+<title>Test de Motivadores — Famo Alimentos</title>
+<style>
+:root{
+  --fondo:#EFEDE6; --papel:#FBFAF6; --tinta:#2A2823; --suave:#6B655A;
+  --linea:#DFD9CA; --azulP:#1F4E78; --azulOsc:#12306B; --azulBg:#E4EAF2; --azulBd:#BFCEE0;
+  --verde:#2E7D6B; --verdeBg:#E1EDE9; --verdeBd:#B9D3CB;
+  --roja:#BF4730;  --rojaBg:#F5E4E0;  --rojaBd:#E0BDB5;
+  --sombra:0 1px 2px rgba(42,40,35,.05), 0 8px 24px rgba(42,40,35,.06);
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--fondo);color:var(--tinta);font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px 64px}
+[hidden]{display:none !important}
+@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+
+.topbar{background:var(--papel);border-bottom:3px solid var(--azulP);box-shadow:0 1px 12px rgba(42,40,35,.05)}
+.topbar-in{max-width:860px;margin:0 auto;padding:13px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{height:54px;width:auto;display:block;flex:none}
+.titles{flex:1 1 220px;min-width:0}
+.titles h1{font-family:var(--serif);font-size:20px;line-height:1.15;margin:0;font-weight:600}
+.titles p{margin:4px 0 0;font-size:10.5px;color:var(--azulP);letter-spacing:.13em;text-transform:uppercase;font-weight:700}
+.madeby{flex:none;font-size:10px;color:#A39C8C;letter-spacing:.05em;align-self:flex-end;padding-bottom:3px}
+@media (max-width:600px){
+  .logo{height:44px}
+  .titles h1{font-size:16px} .titles p{font-size:9.5px;letter-spacing:.1em}
+  .madeby{width:100%;text-align:left;padding-top:4px}
+}
+
+.card{background:var(--papel);border:1px solid var(--linea);border-radius:14px;box-shadow:var(--sombra);padding:22px;margin-top:18px}
+h2{font-family:var(--serif);font-weight:600;font-size:21px;margin:0 0 6px}
+.lead{color:var(--suave);font-size:14.5px;margin:0 0 18px}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--azulP);font-weight:700;margin:0 0 8px}
+.centro{text-align:center}
+.pie{text-align:center;font-size:11px;color:#A39C8C;margin-top:26px;letter-spacing:.04em;line-height:1.6}
+
+.campo{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.op{font-weight:400;color:var(--suave)}
+input[type=text],input[type=email],textarea{width:100%;padding:12px 14px;font:inherit;font-size:16px;color:var(--tinta);
+  background:#fff;border:1px solid var(--linea);border-radius:10px}
+textarea{min-height:92px;resize:vertical;line-height:1.5}
+input:focus-visible,button:focus-visible,a.btn:focus-visible,summary:focus-visible,textarea:focus-visible{outline:2px solid var(--azulP);outline-offset:2px}
+input::placeholder,textarea::placeholder{color:#A9A395}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px 20px;
+  font:inherit;font-size:15px;font-weight:700;letter-spacing:.03em;background:var(--azulP);color:#fff;
+  border:0;border-radius:11px;cursor:pointer;transition:background .15s ease,transform .1s ease;text-decoration:none}
+.btn:hover{background:var(--azulOsc)}
+.btn:active{transform:translateY(1px)}
+.btn[disabled]{opacity:.6;cursor:progress}
+.btn-fant{background:transparent;color:var(--suave);border:1px solid var(--linea);font-weight:600}
+.btn-fant:hover{background:#F1ECE0;color:var(--tinta)}
+
+.priv{border:1px solid var(--linea);border-radius:11px;background:#FCFAF5;margin-bottom:16px;overflow:hidden}
+.priv summary{cursor:pointer;padding:12px 14px;font-size:12.5px;font-weight:700;color:var(--azulP);list-style:none}
+.priv summary::-webkit-details-marker{display:none}
+.priv summary::after{content:"  ▾";color:var(--suave)}
+.priv[open] summary::after{content:"  ▴"}
+.priv .cuerpo{padding:0 14px 14px;font-size:12.5px;color:var(--suave);line-height:1.6}
+.priv .cuerpo p{margin:0 0 8px}
+.priv .cuerpo b{color:var(--tinta)}
+.consent{display:flex;gap:10px;align-items:flex-start;background:var(--azulBg);border:1px solid var(--azulBd);
+  border-radius:11px;padding:13px 14px;margin-bottom:16px}
+.consent input{width:19px;height:19px;flex:none;margin:1px 0 0;accent-color:var(--azulP)}
+.consent label{font-size:13px;font-weight:500;margin:0;line-height:1.45;cursor:pointer}
+
+.escala{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:14px}
+.escala div{background:#F2EDE1;border:1px solid var(--linea);border-radius:8px;padding:8px 4px;text-align:center}
+.escala b{display:block;font-family:var(--serif);font-size:17px;color:var(--azulP)}
+.escala span{font-size:10.5px;color:var(--suave);line-height:1.25;display:block}
+
+.prog{position:sticky;top:0;z-index:20;background:rgba(239,237,230,.95);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--linea);padding:10px 16px;margin:0 -16px 4px}
+.prog-in{max-width:828px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.prog-txt{font-size:12px;font-weight:700;color:var(--suave);white-space:nowrap;letter-spacing:.03em}
+.barra{flex:1;height:7px;background:#DFD9CA;border-radius:99px;overflow:hidden}
+.barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--azulP),#3F7BAE);border-radius:99px;transition:width .3s ease}
+
+.bloque{margin-top:26px;padding:13px 16px;border-radius:12px;border:1px solid}
+.bloque h3{margin:0;font-size:15px;font-family:var(--serif);font-weight:600}
+.bloque p{margin:3px 0 0;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700}
+.bloque .nota{margin-top:7px;font-size:11.5px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--suave);line-height:1.45}
+
+.q{background:var(--papel);border:1px solid var(--linea);border-radius:13px;padding:16px 16px 12px;margin-top:12px;scroll-margin-top:80px}
+.q.falta{border-color:var(--roja);background:#FDF6F4}
+.q-cab{display:flex;gap:11px;align-items:flex-start;margin-bottom:12px}
+.q-num{font-family:var(--serif);font-size:13px;font-weight:700;color:#fff;width:26px;height:26px;
+  border-radius:50%;display:grid;place-items:center;flex:none;margin-top:1px}
+.q-txt{font-size:15.5px;line-height:1.4;font-weight:500}
+.opts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.opts label{margin:0;cursor:pointer}
+.opts input{position:absolute;opacity:0;width:0;height:0}
+.op-cara{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:56px;padding:7px 3px;
+  background:#F2EDE1;border:1px solid var(--linea);border-radius:9px;transition:all .14s ease}
+.op-cara b{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--suave);line-height:1}
+.op-cara span{font-size:9.5px;line-height:1.15;text-align:center;color:#8E8778}
+.opts label:hover .op-cara{background:#EBE4D3;border-color:#CFC7B3}
+.opts input:checked + .op-cara{background:var(--azulP);border-color:var(--azulOsc);box-shadow:0 2px 8px rgba(31,78,120,.32)}
+.opts input:checked + .op-cara b,.opts input:checked + .op-cara span{color:#fff}
+.opts input:focus-visible + .op-cara{outline:2px solid var(--azulP);outline-offset:2px}
+@media (max-width:400px){.op-cara span{font-size:8.5px}.op-cara b{font-size:17px}}
+
+/* Pregunta final: elección de factores */
+.chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:4px}
+.chips label{margin:0;cursor:pointer;font-weight:500}
+.chips input{position:absolute;opacity:0;width:0;height:0}
+.chip{display:flex;align-items:center;gap:9px;padding:11px 13px;background:#F2EDE1;border:1px solid var(--linea);
+  border-radius:10px;font-size:13.5px;line-height:1.3;transition:all .14s ease}
+.chip i{width:11px;height:11px;border-radius:3px;flex:none;display:block}
+.chips label:hover .chip{background:#EBE4D3;border-color:#CFC7B3}
+.chips input:checked + .chip{background:var(--azulP);border-color:var(--azulOsc);color:#fff;box-shadow:0 2px 8px rgba(31,78,120,.28)}
+.chips input:disabled + .chip{opacity:.45}
+.chips input:focus-visible + .chip{outline:2px solid var(--azulP);outline-offset:2px}
+
+.aviso{border-radius:11px;padding:13px 15px;font-size:13.5px;margin-top:16px;border:1px solid}
+.aviso-err{background:var(--rojaBg);border-color:var(--rojaBd);color:#8C3021}
+.palomita{width:62px;height:62px;border-radius:50%;background:var(--verdeBg);border:1px solid var(--verdeBd);display:grid;place-items:center;margin:4px auto 14px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <img class="logo" alt="Famo Alimentos" src="data:image/png;base64,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">
+    <div class="titles">
+      <h1>Test de Motivadores</h1>
+      <p>Famo Alimentos · Talento Humano</p>
+    </div>
+    <div class="madeby">Hecho por Diego Muñoz</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ══ 1. Datos y consentimiento ══════════════════════════ -->
+<section id="p1" class="card">
+  <p class="eyebrow">Antes de empezar</p>
+  <h2>Tus datos</h2>
+  <p class="lead">Lee cuidadosamente cada afirmación y selecciona la opción que mejor refleje la manera en que vives hoy tu trabajo. No hay respuestas correctas ni incorrectas: responde con sinceridad, considerando tu experiencia y tu forma habitual de actuar. Son <b>33 afirmaciones</b> y toma alrededor de <b>7 minutos</b>.</p>
+
+  <div class="campo">
+    <label for="f_nombre">Nombre completo</label>
+    <input id="f_nombre" type="text" autocomplete="name" placeholder="Ej. Mariana Gutiérrez">
+  </div>
+  <div class="campo">
+    <label for="f_correo">Correo electrónico</label>
+    <input id="f_correo" type="email" autocomplete="email" inputmode="email" placeholder="nombre@famoalimentos.com.mx">
+  </div>
+
+  <details class="priv">
+    <summary>Aviso de privacidad — cómo se usan tus respuestas</summary>
+    <div class="cuerpo">
+      <p><b>Quién trata tus datos.</b> Famo Alimentos, a través del área de Talento Humano y del correo <span id="pv_correo"></span>, es responsable del tratamiento de los datos que proporciones en este formulario.</p>
+      <p><b>Qué datos se recaban.</b> Tu nombre y tu correo electrónico, junto con tus 33 respuestas, los factores que señales como los que más te motivan y el comentario que quieras dejar.</p>
+      <p><b>Para qué se usan.</b> Únicamente para conocer qué factores mantienen motivado al personal y orientar con ello las acciones de Talento Humano. <b>No se usan para evaluar tu desempeño</b>, no forman parte de tu expediente disciplinario y no se comparten con terceros ajenos a la empresa.</p>
+      <p><b>Dónde se guardan.</b> En el correo de Talento Humano y en una hoja de cálculo privada de la empresa. No se transfieren fuera de esos medios.</p>
+      <p><b>Quién ve tus resultados.</b> Los revisa Talento Humano. Al terminar el test no se muestran en pantalla; si quieres conocer los tuyos, puedes solicitarlos al correo indicado arriba.</p>
+      <p><b>Tus derechos.</b> Puedes solicitar en cualquier momento el acceso, la rectificación, la cancelación de tus datos o la oposición a su tratamiento (derechos ARCO) escribiendo al mismo correo, incluida la petición de que tu registro se anonimice.</p>
+      <p style="margin:0">Aviso emitido conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.</p>
+    </div>
+  </details>
+
+  <div class="consent">
+    <input id="f_ok" type="checkbox">
+    <label for="f_ok">He leído el aviso de privacidad y acepto que mis respuestas se usen para los fines que ahí se indican.</label>
+  </div>
+
+  <div class="escala" aria-hidden="true">
+    <div><b>1</b><span>Nunca</span></div>
+    <div><b>2</b><span>Rara vez</span></div>
+    <div><b>3</b><span>Algunas veces</span></div>
+    <div><b>4</b><span>Frecuentemente</span></div>
+    <div><b>5</b><span>Casi siempre</span></div>
+  </div>
+
+  <div id="err1" class="aviso aviso-err" hidden></div>
+  <div style="margin-top:18px"><button id="btnIniciar" class="btn" type="button">Comenzar el test</button></div>
+</section>
+
+<!-- ══ 2. Preguntas ═══════════════════════════════════════ -->
+<section id="p2" hidden>
+  <div class="prog">
+    <div class="prog-in">
+      <span class="prog-txt"><span id="pgN">0</span>/33</span>
+      <div class="barra"><i id="pgBar"></i></div>
+    </div>
+  </div>
+  <div id="listaQ"></div>
+
+  <div class="card" id="cierrePreg" style="margin-top:26px">
+    <p class="eyebrow">Para terminar</p>
+    <h2>¿Qué te mantiene motivado?</h2>
+    <p class="lead">De los ocho factores del test, elige <b>hasta 3</b> que más influyen para que permanezcas motivado en tu trabajo.</p>
+    <div class="chips" id="chips"></div>
+    <p id="chCount" style="font-size:12px;color:var(--suave);margin:10px 0 0"></p>
+    <div class="campo" style="margin-top:18px">
+      <label for="f_coment">¿Quieres agregar algo? <span class="op">(opcional)</span></label>
+      <textarea id="f_coment" placeholder="Lo que escribas aquí lo lee Talento Humano."></textarea>
+    </div>
+  </div>
+
+  <div id="err2" class="aviso aviso-err" hidden></div>
+  <div style="margin-top:18px"><button id="btnEnviar" class="btn" type="button">Enviar mis respuestas</button></div>
+  <div style="margin-top:10px"><button id="btnVolver" class="btn btn-fant" type="button">Volver a mis datos</button></div>
+</section>
+
+<!-- ══ 3. Cierre — sin resultados ═════════════════════════ -->
+<section id="p3" hidden><div class="card centro" id="cierre"></div></section>
+
+<p class="pie">Famo Alimentos · Talento Humano · Hecho por Diego Muñoz</p>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN — lo único que normalmente vas a querer tocar
+   ===================================================================== */
+const CONFIG = {
+  ENDPOINT_URL   : "https://script.google.com/macros/s/AKfycbylwJojO8mPcyDSc-wQnqKXDxcOVe9RmLuKft-xmYRL-l25k3EsTKQDEm8d62t1xGZMsg/exec",
+  CORREO_DESTINO : "talento.humano@famoalimentos.com.mx",  // aviso de privacidad y respaldo por mailto
+  HOJA           : "Motivadores",                          // pestaña del libro de registro
+  GUARDAR_AVANCE : true                                    // recupera el avance si se cierra la página
+};
+
+/* =====================================================================
+   INSTRUMENTO — 33 afirmaciones, 8 factores, escala 1-5
+   Fuente única: datos.json. No edites este bloque a mano.
+   ===================================================================== */
+const DATOS = {"titulo":"Test de Motivadores","subtitulo":"Famo Alimentos · Talento Humano","factores":{"Económico":{"clave":"eco","hex":"#2E7D6B","bg":"#E1EDE9","bd":"#B9D3CB","desc":"Sueldo, bonos y prestaciones.","define":"Qué tanto percibe la persona que lo que recibe corresponde con lo que aporta: compensación, bonos por objetivos, incrementos y prestaciones por encima de la ley."},"Reconocimiento":{"clave":"rec","hex":"#B07A22","bg":"#F6EEDC","bd":"#E4D2A8","desc":"Que el trabajo se vea, se valore y se diga.","define":"Qué tanto percibe la persona que su trabajo se nota: reconocimiento público, retroalimentación del jefe inmediato y valoración de aportaciones que no siempre son cifras."},"Desarrollo":{"clave":"des","hex":"#3D6B8F","bg":"#E2EAF1","bd":"#B7C9D9","desc":"Crecer, aprender y mantenerse al día.","define":"Qué tanto ve la persona camino hacia adelante y formación real: posibilidad de crecimiento, capacitación especializada, actualización y búsqueda propia de aprendizaje."},"Toma de Decisiones":{"clave":"dec","hex":"#6E5091","bg":"#EBE5F2","bd":"#CFC2E0","desc":"Autonomía, autoridad y confianza para decidir.","define":"Qué tanto puede decidir la persona sobre lo suyo: libertad en su departamento, autoridad para resolver, propuestas de mejora que aterrizan y confianza de la dirección."},"Reto y Logros":{"clave":"ret","hex":"#BF6A3C","bg":"#F7E9E0","bd":"#E7C9B3","desc":"Objetivos exigentes y problemas que valga la pena resolver.","define":"Qué tanto el puesto le representa un desafío: gusto por objetivos retadores, facilidad para problemas complejos, participación en proyectos estratégicos e iniciativa para proponerlos."},"Propósito e Impacto":{"clave":"pro","hex":"#1F4E78","bg":"#E0E8F0","bd":"#B4C6DA","desc":"Ver que lo que se hace le sirve a la empresa.","define":"Qué tanto conecta la persona su trabajo diario con el resultado de la organización, y qué tanto orgullo de pertenencia expresa."},"Liderazgo":{"clave":"lid","hex":"#5E7F3C","bg":"#EAF0E1","bd":"#C9D8B4","desc":"El equipo, la confianza y la relación con el jefe.","define":"Qué tanto lo sostiene su entorno: compromiso del equipo, capacidad de conducirlo, ambiente de confianza y relación con el jefe directo.","nota":"Si no tienes personal a tu cargo, responde pensando en tu equipo de trabajo más cercano y en cómo influyes en él."},"Equilibrio y Bienestar":{"clave":"equ","hex":"#99506E","bg":"#F3E6EC","bd":"#DDC0CE","desc":"Tiempo, carga de trabajo y vida personal.","define":"Qué tanto es sostenible su ritmo: tiempo para asuntos personales, carga acorde al puesto, espacio para la vida fuera del trabajo y cuidado del propio bienestar."}},"preguntas":[{"a":"Económico","t":"Recibo una compensación acorde con mis responsabilidades."},{"a":"Económico","t":"Cuento con bonos relacionados con el cumplimiento de objetivos."},{"a":"Económico","t":"Tengo oportunidades de incremento salarial."},{"a":"Económico","t":"La empresa otorga prestaciones adicionales a las que marca la ley."},{"a":"Reconocimiento","t":"Reconocen públicamente mis resultados."},{"a":"Reconocimiento","t":"Recibo retroalimentación de mi jefe inmediato."},{"a":"Reconocimiento","t":"Mi trabajo es valorado."},{"a":"Reconocimiento","t":"Reconocen mis aportaciones aunque no siempre estén relacionadas con mis resultados económicos."},{"a":"Desarrollo","t":"Tengo posibilidades de crecimiento dentro de la empresa."},{"a":"Desarrollo","t":"He participado en programas de capacitación especializada."},{"a":"Desarrollo","t":"Estoy en constante actualización sobre las tendencias de mi departamento."},{"a":"Desarrollo","t":"Busco opciones de capacitación que complementen mi formación académica."},{"a":"Toma de Decisiones","t":"Tengo libertad para tomar decisiones relacionadas con mi departamento."},{"a":"Toma de Decisiones","t":"Asumo la autoridad para resolver los problemas que se presentan."},{"a":"Toma de Decisiones","t":"Propongo cambios y mejoras en la organización."},{"a":"Toma de Decisiones","t":"Las mejoras que propongo han generado impacto en la empresa."},{"a":"Toma de Decisiones","t":"Tengo la confianza de la dirección para tomar decisiones importantes."},{"a":"Reto y Logros","t":"Me gusta trabajar con objetivos que representen un reto profesional."},{"a":"Reto y Logros","t":"Se me facilita resolver problemas complejos."},{"a":"Reto y Logros","t":"Participo en proyectos estratégicos de la empresa."},{"a":"Reto y Logros","t":"Propongo proyectos sin necesidad de que me sean solicitados."},{"a":"Propósito e Impacto","t":"Mi trabajo contribuye a los objetivos de la empresa."},{"a":"Propósito e Impacto","t":"Mis resultados generan impacto en los resultados de la organización."},{"a":"Propósito e Impacto","t":"Mi participación contribuye a las decisiones para el crecimiento de la empresa."},{"a":"Propósito e Impacto","t":"Me siento orgulloso de pertenecer a la empresa."},{"a":"Liderazgo","t":"Cuento con un equipo comprometido."},{"a":"Liderazgo","t":"Lidero a mi equipo de trabajo con base en mi experiencia, conocimientos y capacidad para tomar decisiones."},{"a":"Liderazgo","t":"Trabajo en un ambiente donde existe confianza."},{"a":"Liderazgo","t":"Tengo buena relación con mi jefe directo."},{"a":"Equilibrio y Bienestar","t":"Cuento con tiempo suficiente para atender asuntos personales."},{"a":"Equilibrio y Bienestar","t":"Mi carga de trabajo está acorde con mi posición."},{"a":"Equilibrio y Bienestar","t":"Me gusta dedicar tiempo a mis hobbies o actividades personales después de mi jornada laboral."},{"a":"Equilibrio y Bienestar","t":"Busco condiciones que favorezcan mi bienestar físico, emocional y personal."}],"lectura":{"Económico":{"Alto":"Percibe que su compensación, bonos y prestaciones corresponden con lo que aporta. Hoy el dinero no es una fuente de desmotivación.","Medio alto":"La compensación le parece razonable, pero hay un componente flojo: el bono, la revisión salarial o las prestaciones adicionales.","Medio":"La percepción de pago justo está a la mitad. Puede convertirse en motivo de salida si coincide con reconocimiento bajo.","Bajo":"Considera que lo que recibe no corresponde con sus responsabilidades. De los ocho factores, este es el de mayor riesgo de rotación inmediata."},"Reconocimiento":{"Alto":"Su trabajo se ve y se le dice. Recibe retroalimentación y siente que sus aportaciones cuentan más allá del número.","Medio alto":"Se siente valorado, aunque el reconocimiento llega de forma irregular o casi siempre atado a resultados económicos.","Medio":"Recibe reconocimiento a medias. Es común que le llegue el señalamiento del error y no el del acierto.","Bajo":"No percibe que su trabajo se reconozca. Es el factor más barato de corregir y el que más rápido se nota."},"Desarrollo":{"Alto":"Está aprendiendo y ve camino hacia adelante. Se actualiza por iniciativa propia.","Medio alto":"Se capacita y se mantiene al día, pero la ruta de crecimiento dentro de la empresa no le queda clara.","Medio":"Ha tenido algo de formación, aunque no de manera sostenida ni conectada con su puesto.","Bajo":"No ve crecimiento ni formación. En perfiles jóvenes o técnicos este factor pesa tanto como el sueldo."},"Toma de Decisiones":{"Alto":"Decide, resuelve y propone. Tiene la confianza de la dirección y la usa.","Medio alto":"Toma decisiones en su terreno y propone mejoras, pero varias de sus propuestas no aterrizan.","Medio":"Su margen de decisión es limitado o no lo tiene claro. Suele consultar más de lo necesario.","Bajo":"Percibe que no puede decidir sobre lo suyo. Esto apaga la iniciativa aunque el resto de los factores esté bien."},"Reto y Logros":{"Alto":"Busca dificultad. Propone proyectos por iniciativa propia y participa en lo estratégico.","Medio alto":"Le gusta el reto y resuelve bien, pero participa poco en proyectos estratégicos o propone poco.","Medio":"Responde a lo que se le pide, sin buscar más. Puede ser falta de espacio, no de capacidad.","Bajo":"El puesto no le representa reto o no se siente en condiciones de asumirlo. Hay riesgo de aburrimiento o de desgaste, según el caso."},"Propósito e Impacto":{"Alto":"Ve la línea entre lo que hace todos los días y los resultados de la empresa, y expresa orgullo de pertenecer.","Medio alto":"Sabe que su trabajo sirve, pero no ve cómo influye en las decisiones de crecimiento.","Medio":"La conexión entre su trabajo y el resultado de la empresa es difusa.","Bajo":"No ve para qué sirve lo que hace ni se siente parte. Es el factor que más pesa en la decisión de quedarse."},"Liderazgo":{"Alto":"Tiene equipo comprometido, ambiente de confianza y buena relación con su jefe. El entorno lo sostiene.","Medio alto":"El entorno es bueno, con un punto flojo: el compromiso del equipo o la confianza del ambiente.","Medio":"La relación con el jefe o el ambiente de confianza está a media. Suele arrastrar a los demás factores hacia abajo.","Bajo":"El entorno de trabajo no lo sostiene: falta confianza, equipo o relación con el jefe. Conviene atender esto primero; lo demás no avanza sin ello."},"Equilibrio y Bienestar":{"Alto":"Su carga es acorde y tiene tiempo para su vida personal. El ritmo es sostenible.","Medio alto":"El equilibrio se sostiene, aunque en temporadas la carga se le acerca al límite.","Medio":"La carga de trabajo y el tiempo personal están en tensión. A este nivel el desgaste ya empieza a acumularse.","Bajo":"No tiene tiempo ni carga acorde. Es la señal más clara de desgaste y suele anticipar una renuncia."}},"acciones":{"Económico":{"Alto":["Sostener la claridad: que sepa cómo se calcula su bono y cuándo se revisa su sueldo.","No es la palanca a mover con esta persona; el esfuerzo rinde más en otro factor."],"Medio alto":["Preguntar en la siguiente sesión uno a uno cuál de los tres componentes ve más débil.","Explicar el paquete completo: muchas veces el valor real de las prestaciones no se conoce."],"Medio":["Revisar su posición contra el tabulador interno y contra el mercado local.","Si no hay margen de incremento, compensar con lo que sí está en la mano: reconocimiento y desarrollo."],"Bajo":["Revisión de sueldo contra tabulador y mercado en menos de 30 días.","Conversación directa: qué esperaba y con qué lo está comparando."]},"Reconocimiento":{"Alto":["Pedirle que sea quien reconozca públicamente a otros; el reconocimiento se contagia.","Sostener la frecuencia de la retroalimentación: se pierde rápido."],"Medio alto":["Fijar una retroalimentación breve al mes con su jefe inmediato.","Reconocer también las aportaciones que no se traducen en cifras."],"Medio":["Entrenar al jefe inmediato en retroalimentación específica y oportuna.","Incluirlo en el espacio donde se dan a conocer los resultados del área."],"Bajo":["Retroalimentación de su jefe inmediato esta misma semana, con hechos concretos.","Reconocimiento público de un logro suyo en la siguiente junta de área."]},"Desarrollo":{"Alto":["Darle un rol de instructor interno: enseñar consolida y motiva.","Mostrarle el siguiente escalón concreto, no la promesa genérica de crecer."],"Medio alto":["Dibujar con la persona la ruta: qué puesto sigue y qué le falta para llegar.","Asignarle una capacitación especializada dentro del plan del próximo semestre."],"Medio":["Incluirlo en la detección de necesidades de capacitación del área.","Fijar un objetivo de aprendizaje concreto para el trimestre, con fecha."],"Bajo":["Conversación de carrera con su jefe y Talento Humano dentro del mes.","Una capacitación asignada en el trimestre, aunque sea corta."]},"Toma de Decisiones":{"Alto":["Ampliar su margen: delegarle una decisión que hoy sube a dirección.","Considerarlo para proyectos que requieran criterio propio."],"Medio alto":["Dar respuesta formal a lo que propone, aunque sea un no razonado.","Definir por escrito hasta dónde puede decidir sin consultar."],"Medio":["Delimitar por escrito su autoridad: qué decide, qué consulta y qué informa.","Acompañarlo en dos o tres decisiones para que gane confianza."],"Bajo":["Revisar con su jefe qué decisiones se pueden delegar de inmediato.","Escuchar y responder una propuesta suya en las próximas dos semanas."]},"Reto y Logros":{"Alto":["Asignarle un proyecto con dificultad real; el trabajo rutinario lo desgasta.","Cuidar que el reto no se vuelva sobrecarga: revisar su Equilibrio y Bienestar."],"Medio alto":["Sumarlo a un proyecto estratégico, aunque sea como parte del equipo.","Abrir un espacio formal para que presente propuestas."],"Medio":["Fijarle un objetivo con dificultad medible este trimestre.","Preguntarle qué problema del área le gustaría resolver."],"Bajo":["Distinguir si es aburrimiento o desgaste: conversación con su jefe inmediato.","Si es aburrimiento, rotar una responsabilidad; si es desgaste, revisar carga y formación."]},"Propósito e Impacto":{"Alto":["Darle voz hacia dentro de la empresa: la convicción arrastra.","Compartirle el dato duro del impacto de su área; refuerza lo que ya siente."],"Medio alto":["Compartirle los resultados del área con números, no solo con discurso.","Involucrarlo en una decisión de mejora que lo afecte directamente."],"Medio":["Explicarle en concreto qué indicador de la empresa mueve su puesto.","Cerrar el ciclo: contarle qué pasó con lo que entregó."],"Bajo":["Conversación con su jefe sobre el para qué de su puesto, con ejemplos reales.","Revisar si el orgullo de pertenencia se perdió por un hecho concreto y atenderlo."]},"Liderazgo":{"Alto":["Documentar qué hace bien con su equipo y compartirlo con otros jefes.","Cuidar que el buen ambiente no dependa de una sola persona."],"Medio alto":["Identificar en la siguiente sesión uno a uno cuál de los dos es el punto flojo.","Herramientas de liderazgo de equipo si el punto flojo es el equipo."],"Medio":["Escuchar por separado a la persona y a su jefe inmediato.","Revisar el clima del área completa: rara vez es un caso aislado."],"Bajo":["Entrevista con Talento Humano dentro de la semana, por separado.","Revisar el clima del área y la carga de liderazgo del jefe inmediato."]},"Equilibrio y Bienestar":{"Alto":["Cuidarlo si va a entrar a un proyecto exigente.","Usar su carga como referencia para calibrar la del resto del área."],"Medio alto":["Revisar la distribución del trabajo en los picos del área.","Confirmar que las horas extra sean excepción y no la norma."],"Medio":["Medir su carga real contra la que corresponde al puesto.","Acordar límites de horario que se respeten por ambas partes."],"Bajo":["Revisión inmediata de carga y horarios con su jefe.","Acordar medidas concretas y volver a preguntar en 30 días."]}}};
+const FACTORES = DATOS.factores, PREGUNTAS = DATOS.preguntas, LECTURA = DATOS.lectura, ACCIONES = DATOS.acciones;
+const NOMBRES = Object.keys(FACTORES);
+const ETIQUETAS = ["Nunca","Rara vez","Algunas veces","Frecuentemente","Casi siempre"];
+const TOTAL_P = PREGUNTAS.length;
+const MAX_TOTAL = TOTAL_P * 5;
+const MAX_ELECCION = 3;
+
+/* Los bloques tienen 4 o 5 reactivos, así que el nivel se lee sobre el
+   PROMEDIO de la escala y no sobre la suma. Cada nivel equivale a un
+   punto de la escala de respuesta:
+   Alto 4.1-5.0 · Medio alto 3.1-4.0 · Medio 2.1-3.0 · Bajo 1.0-2.0 */
+const UMBRALES = [[4.05,"Alto"],[3.05,"Medio alto"],[2.05,"Medio"],[0,"Bajo"]];
+const NIVEL_COLOR = {"Alto":"#2E7D6B","Medio alto":"#3D6B8F","Medio":"#B07A22","Bajo":"#BF4730"};
+
+/* =====================================================================
+   Utilidades
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const respuestas = new Array(TOTAL_P).fill(null);
+let elegidos = [], enviando = false, intentos = 0, detalle = "";
+
+function nivel(prom){ for(const [min,nv] of UMBRALES) if(prom>=min) return nv; return "Bajo"; }
+
+function calcular(){
+  const suma = {}, cuenta = {}, prom = {};
+  NOMBRES.forEach(a=>{ suma[a]=0; cuenta[a]=0; });
+  respuestas.forEach((v,i)=>{ const a=PREGUNTAS[i].a; suma[a]+=v; cuenta[a]++; });
+  NOMBRES.forEach(a=> prom[a] = suma[a]/cuenta[a]);
+  const total = NOMBRES.reduce((s,a)=>s+suma[a],0);
+  const orden = NOMBRES.slice().sort((a,b)=> prom[b]-prom[a]);
+  return {suma, cuenta, prom, total, general: total/MAX_TOTAL, orden,
+          fuertes: orden.slice(0,2), atencion: orden.slice(-3).reverse()};
+}
+function error(sel,msg){ const el=$(sel); el.innerHTML=msg; el.hidden=false; el.scrollIntoView({block:"center",behavior:"smooth"}); }
+
+const guardar = (k,v)=>{ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+const leer    = k =>{ try{ const s=localStorage.getItem(k); return s?JSON.parse(s):null; }catch(e){ return null; } };
+const borrar  = k =>{ try{ localStorage.removeItem(k); }catch(e){} };
+const CLAVE = "test_motivadores_avance";
+
+$("#pv_correo").textContent = CONFIG.CORREO_DESTINO;
+
+/* =====================================================================
+   Pantalla 1 → 2
+   ===================================================================== */
+$("#btnIniciar").addEventListener("click", ()=>{
+  const n = $("#f_nombre").value.trim(), e = $("#f_correo").value.trim();
+  if(n.length < 3) return error("#err1","Escribe tu nombre completo para continuar.");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return error("#err1","Escribe un correo electrónico válido para continuar.");
+  if(!$("#f_ok").checked) return error("#err1","Para continuar necesitas aceptar el aviso de privacidad.");
+  $("#err1").hidden = true; $("#p1").hidden = true; $("#p2").hidden = false;
+  window.scrollTo({top:0});
+});
+$("#btnVolver").addEventListener("click", ()=>{ $("#p2").hidden=true; $("#p1").hidden=false; window.scrollTo({top:0}); });
+
+/* Pinta las afirmaciones agrupadas por factor */
+(function pintar(){
+  let html = "", actual = "";
+  PREGUNTAS.forEach((q,i)=>{
+    const n = i+1, A = FACTORES[q.a];
+    if(q.a !== actual){
+      actual = q.a;
+      const nota = A.nota ? `<div class="nota">${A.nota}</div>` : "";
+      html += `<div class="bloque" style="background:${A.bg};border-color:${A.bd}">
+        <h3 style="color:${A.hex}">${q.a}</h3><p style="color:${A.hex}">${A.desc}</p>${nota}</div>`;
+    }
+    const opts = ETIQUETAS.map((et,k)=>`
+      <label><input type="radio" name="q${n}" value="${k+1}">
+        <span class="op-cara"><b>${k+1}</b><span>${et}</span></span></label>`).join("");
+    html += `<article class="q" id="q${n}">
+      <div class="q-cab"><span class="q-num" style="background:${A.hex}">${n}</span><span class="q-txt">${esc(q.t)}</span></div>
+      <div class="opts" role="radiogroup" aria-label="Afirmación ${n}">${opts}</div></article>`;
+  });
+  $("#listaQ").innerHTML = html;
+
+  $("#chips").innerHTML = NOMBRES.map((a,k)=>`
+    <label><input type="checkbox" class="ch" value="${esc(a)}" id="ch${k}">
+      <span class="chip"><i style="background:${FACTORES[a].hex}"></i>${esc(a)}</span></label>`).join("");
+})();
+
+function refrescarProgreso(){
+  const hechas = respuestas.filter(v=>v!==null).length;
+  $("#pgN").textContent = hechas;
+  $("#pgBar").style.width = (hechas/TOTAL_P*100)+"%";
+  return hechas;
+}
+function guardarAvance(){
+  if(!CONFIG.GUARDAR_AVANCE) return;
+  guardar(CLAVE, {r:respuestas, n:$("#f_nombre").value, c:$("#f_correo").value, e:elegidos, m:$("#f_coment").value});
+}
+
+$("#listaQ").addEventListener("change", ev=>{
+  if(ev.target.type!=="radio") return;
+  const n = +ev.target.name.slice(1);
+  respuestas[n-1] = +ev.target.value;
+  document.getElementById("q"+n).classList.remove("falta");
+  if(refrescarProgreso()===TOTAL_P && !$("#err2").hidden) $("#err2").hidden = true;
+  guardarAvance();
+});
+
+function sincronizarChips(){
+  const cajas = [...document.querySelectorAll(".ch")];
+  elegidos = cajas.filter(c=>c.checked).map(c=>c.value);
+  cajas.forEach(c=> c.disabled = !c.checked && elegidos.length >= MAX_ELECCION);
+  $("#chCount").textContent = elegidos.length === 0
+    ? `Puedes elegir hasta ${MAX_ELECCION}.`
+    : `Llevas ${elegidos.length} de ${MAX_ELECCION}` + (elegidos.length >= MAX_ELECCION
+        ? ". Para cambiar alguno, desmarca el que ya no quieras." : ".");
+}
+sincronizarChips();
+$("#chips").addEventListener("change", ()=>{ sincronizarChips(); guardarAvance(); });
+$("#f_coment").addEventListener("input", guardarAvance);
+
+/* Recupera un avance previo, si lo hay */
+(function recuperar(){
+  if(!CONFIG.GUARDAR_AVANCE) return;
+  const g = leer(CLAVE);
+  if(!g || !Array.isArray(g.r) || !g.r.some(v=>v!==null)) return;
+  g.r.forEach((v,i)=>{
+    if(v===null || i>=TOTAL_P) return;
+    respuestas[i] = v;
+    const el = document.querySelector(`input[name="q${i+1}"][value="${v}"]`);
+    if(el) el.checked = true;
+  });
+  if(g.n) $("#f_nombre").value = g.n;
+  if(g.c) $("#f_correo").value = g.c;
+  if(g.m) $("#f_coment").value = g.m;
+  if(Array.isArray(g.e)) g.e.forEach(v=>{
+    const c = [...document.querySelectorAll(".ch")].find(x=>x.value===v);
+    if(c) c.checked = true;
+  });
+  sincronizarChips();
+  const hechas = refrescarProgreso();
+  const av = document.createElement("div");
+  av.className = "aviso";
+  av.style.cssText = "background:var(--azulBg);border-color:var(--azulBd);color:var(--azulP);font-size:13px";
+  av.innerHTML = `Recuperamos tu avance anterior: llevabas <b>${hechas} de ${TOTAL_P}</b> respuestas.
+    <button type="button" id="btnLimpiar" style="margin-left:6px;background:none;border:0;color:var(--azulP);
+    text-decoration:underline;cursor:pointer;font:inherit;font-weight:700">Empezar de nuevo</button>`;
+  $("#p1").insertBefore(av, $("#err1"));
+  av.querySelector("#btnLimpiar").addEventListener("click", ()=>{ borrar(CLAVE); location.reload(); });
+})();
+
+/* =====================================================================
+   Envío
+   ===================================================================== */
+$("#btnEnviar").addEventListener("click", enviar);
+
+async function enviar(){
+  if(enviando) return;
+  const faltan = respuestas.map((v,i)=>v===null?i+1:null).filter(Boolean);
+  if(faltan.length){
+    faltan.forEach(n=>document.getElementById("q"+n).classList.add("falta"));
+    error("#err2", `Te faltan ${faltan.length} ${faltan.length===1?"respuesta":"respuestas"}: afirmaci${faltan.length>1?"ones":"ón"} ${faltan.slice(0,8).join(", ")}${faltan.length>8?"…":""}.`);
+    document.getElementById("q"+faltan[0]).scrollIntoView({block:"center",behavior:"smooth"});
+    return;
+  }
+  if(elegidos.length === 0){
+    error("#err2","Elige al menos un factor de los que te mantienen motivado.");
+    $("#chips").scrollIntoView({block:"center",behavior:"smooth"});
+    return;
+  }
+  enviando = true; intentos++;
+  const btn = $("#btnEnviar"); btn.disabled = true; btn.textContent = "Enviando…";
+
+  const ahora = new Date();
+  const datos = {
+    nombre : $("#f_nombre").value.trim(),
+    correo : $("#f_correo").value.trim(),
+    coment : $("#f_coment").value.trim(),
+    fecha  : ahora.toLocaleDateString("es-MX",{day:"2-digit",month:"2-digit",year:"numeric"}),
+    hora   : ahora.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"})
+  };
+  const res = calcular();
+
+  const encabezados = ["Fecha","Hora","Nombre","Correo"]
+    .concat(NOMBRES.map(a=>a+" (prom)"))
+    .concat(NOMBRES.map(a=>a+" (nivel)"))
+    .concat(["Total","General %","Motivador más fuerte","Foco de atención",
+             "Factores que declara","Brechas declaradas","Comentario"])
+    .concat(PREGUNTAS.map((q,i)=>"P"+(i+1)));
+  const brechas = elegidos.filter(a=>["Medio","Bajo"].indexOf(nivel(res.prom[a]))>=0);
+  const valores = [datos.fecha, datos.hora, datos.nombre, datos.correo]
+    .concat(NOMBRES.map(a=>res.prom[a].toFixed(2)))
+    .concat(NOMBRES.map(a=>nivel(res.prom[a])))
+    .concat([res.total, (res.general*100).toFixed(1), res.orden[0], res.orden[res.orden.length-1],
+             elegidos.join(" · "), brechas.join(" · ") || "ninguna", datos.coment])
+    .concat(respuestas);
+
+  let ok = false;
+  detalle = "";
+  try{
+    if(!/^https:\/\/script\.google\.com/.test(CONFIG.ENDPOINT_URL)){
+      detalle = "El formulario no tiene configurada la dirección del servicio (ENDPOINT_URL).";
+    }else{
+      const r = await fetch(CONFIG.ENDPOINT_URL, {
+        method:"POST",
+        headers:{"Content-Type":"text/plain;charset=utf-8"},
+        body: JSON.stringify({
+          remitente:"Test de Motivadores · Famo Alimentos",
+          asunto:`Test de Motivadores — ${datos.nombre} · ${datos.fecha}`,
+          html: correoHTML(datos,res,brechas),
+          hoja: CONFIG.HOJA, encabezados, valores
+        })
+      });
+      let cuerpo = null;
+      try{ cuerpo = await r.json(); }catch(e){ cuerpo = null; }
+      /* Apps Script responde 200 aunque el script haya fallado:
+         hay que mirar el contenido, no solo el código HTTP. */
+      if(r.ok && cuerpo && cuerpo.ok === true){
+        ok = true;
+      }else if(cuerpo && cuerpo.error){
+        detalle = "El servicio respondió: " + cuerpo.error;
+      }else if(!r.ok){
+        detalle = "El servicio respondió con el código " + r.status + ".";
+      }else{
+        detalle = "El servicio respondió algo que no se pudo interpretar.";
+      }
+    }
+  }catch(err){ detalle = "No hubo respuesta del servicio (" + (err && err.message ? err.message : "sin detalle") + ")."; }
+
+  enviando = false;
+  cerrar(ok, datos);
+}
+
+function cerrar(ok, datos){
+  if(ok){
+    borrar(CLAVE);
+    $("#p2").hidden = true; $("#p3").hidden = false;
+    $("#cierre").innerHTML = `
+      <div class="palomita"><svg width="30" height="30" viewBox="0 0 24 24" fill="none"
+        stroke="#2E7D6B" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
+      <p class="eyebrow">Enviado</p>
+      <h2>Gracias, ${esc(datos.nombre.split(" ")[0])}</h2>
+      <p class="lead" style="margin-bottom:0">Tus respuestas se enviaron correctamente. Ya puedes cerrar esta página.</p>
+      <p style="font-size:12.5px;color:#A39C8C;margin-top:16px">Talento Humano revisará los resultados. Si quieres conocer los tuyos, escribe a ${esc(CONFIG.CORREO_DESTINO)}.</p>`;
+    window.scrollTo({top:0});
+    return;
+  }
+  const btn = $("#btnEnviar");
+  btn.disabled = false; btn.textContent = "Intentar enviar de nuevo";
+  if(intentos < 3){
+    error("#err2","No se pudo enviar. Revisa tu conexión y toca “Intentar enviar de nuevo”."
+      + (detalle ? `<div style="font-size:11.5px;color:#8C3021;opacity:.85;margin-top:7px">${esc(detalle)}</div>` : ""));
+  }else{
+    const asunto = encodeURIComponent(`Test de Motivadores · ${datos.nombre} · ${datos.fecha}`);
+    const L = ["TEST DE MOTIVADORES — respuestas sin procesar",
+               "Participante: "+datos.nombre, "Correo: "+datos.correo,
+               "Fecha: "+datos.fecha+" "+datos.hora, ""];
+    respuestas.forEach((v,i)=> L.push(String(i+1).padStart(2,"0")+": "+v));
+    L.push("", "Factores que declara: "+elegidos.join(", "));
+    if(datos.coment) L.push("Comentario: "+datos.coment);
+    error("#err2", `El envío automático sigue sin responder. Usa este respaldo para que tus respuestas no se pierdan:
+      <a class="btn" style="margin-top:10px;background:#8C3021" href="mailto:${CONFIG.CORREO_DESTINO}?subject=${asunto}&body=${encodeURIComponent(L.join("\n"))}">Enviar por correo</a>`);
+  }
+}
+
+/* =====================================================================
+   Correo que recibe Talento Humano — quien contesta no ve nada de esto
+   ===================================================================== */
+function correoHTML(datos,res,brechas){
+  const pct = (res.general*100).toFixed(1);
+
+  const tarjeta = a=>{
+    const A = FACTORES[a], pr = res.prom[a], nv = nivel(pr);
+    return `<td width="25%" valign="top" style="padding:3px">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:${A.bg};border:1px solid ${A.bd};border-radius:10px">
+        <tr><td align="center" style="padding:11px 5px;font-family:Arial,sans-serif">
+          <div style="font-size:8.5px;letter-spacing:.7px;font-weight:bold;color:${A.hex};line-height:1.3;min-height:22px">${a.toUpperCase()}</div>
+          <div style="font-family:Georgia,serif;font-size:29px;color:${A.hex};padding:4px 0 0;line-height:1">${pr.toFixed(1)}</div>
+          <div style="font-size:9px;color:#8E8778;padding-top:2px">de 5.0 · ${res.suma[a]}/${res.cuenta[a]*5} pts</div>
+          <div style="font-size:9.5px;font-weight:bold;letter-spacing:.6px;color:${NIVEL_COLOR[nv]};padding-top:4px">${nv.toUpperCase()}</div>
+        </td></tr></table></td>`;
+  };
+
+  const bloque = a=>{
+    const A = FACTORES[a], nv = nivel(res.prom[a]);
+    const li = ACCIONES[a][nv].map(x=>`<li style="padding-bottom:4px">${esc(x)}</li>`).join("");
+    const marca = elegidos.indexOf(a)>=0
+      ? ` <span style="font-size:9.5px;background:#F5E4E0;border:1px solid #E0BDB5;color:#8C3021;border-radius:20px;padding:2px 7px;letter-spacing:.4px">LO DECLARA COMO MOTIVADOR</span>` : "";
+    return `<tr><td style="padding:0 0 14px">
+      <div style="font-size:11px;font-weight:bold;color:${A.hex};letter-spacing:.8px;padding-bottom:4px">${a.toUpperCase()} · ${nv}${marca}</div>
+      <div style="font-size:13px;color:#453F35;line-height:1.55">${LECTURA[a][nv]}</div>
+      <ul style="font-size:12.5px;color:#453F35;line-height:1.5;margin:8px 0 0;padding-left:18px">${li}</ul></td></tr>`;
+  };
+
+  const fila = arr=>`<tr>${arr.map(tarjeta).join("")}</tr>`;
+  const chip = a=>`<span style="display:inline-block;font-size:11.5px;color:#fff;background:${FACTORES[a].hex};border-radius:20px;padding:4px 11px;margin:0 5px 5px 0">${esc(a)}</span>`;
+
+  const avisoBrecha = brechas.length ? `
+    <tr><td style="padding:12px 18px 0">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#F5E4E0;border:1px solid #E0BDB5;border-radius:10px">
+        <tr><td style="padding:12px 14px;font-family:Arial,sans-serif">
+          <div style="font-size:10px;letter-spacing:1.2px;color:#8C3021;font-weight:bold">ATENDER PRIMERO</div>
+          <div style="font-size:12.5px;color:#6E2A1E;line-height:1.55;padding-top:5px">
+            ${brechas.map(b=>esc(b)).join(", ")}: ${brechas.length===1?"es un factor que declara":"son factores que declara"} como de los que más ${brechas.length===1?"lo mantiene":"lo mantienen"} motivado, y ${brechas.length===1?"salió":"salieron"} en nivel medio o bajo. Ahí es donde una acción rinde más.
+          </div></td></tr></table></td></tr>` : "";
+
+  const comentario = datos.coment ? `
+    <tr><td style="padding:14px 18px 0">
+      <div style="font-size:10px;letter-spacing:1.4px;color:#1F4E78;font-weight:bold;padding-bottom:5px">LO QUE ESCRIBIÓ</div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #DFD9CA;border-radius:10px">
+        <tr><td style="padding:13px 15px;font-size:13px;color:#453F35;line-height:1.6;font-style:italic">“${esc(datos.coment)}”</td></tr>
+      </table></td></tr>` : "";
+
+  return `<div style="background:#EFEDE6;padding:18px 10px;font-family:Arial,Helvetica,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:660px;margin:0 auto;background:#FBFAF6;border:1px solid #DFD9CA;border-radius:12px;overflow:hidden">
+
+    <tr><td style="background:#FBFAF6;border-bottom:3px solid #1F4E78;padding:14px 18px">
+      <table width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td width="62" valign="middle"><img src="cid:logofamo" alt="Famo Alimentos" height="52" style="display:block;border:0"></td>
+        <td valign="middle" style="padding-left:12px">
+          <div style="font-family:Georgia,serif;font-size:19px;color:#2A2823">Test de Motivadores</div>
+          <div style="font-size:10px;color:#1F4E78;letter-spacing:1.3px;font-weight:bold;padding-top:4px">FAMO ALIMENTOS · TALENTO HUMANO · ${esc(datos.fecha)} ${esc(datos.hora)}</div>
+        </td></tr></table></td></tr>
+
+    <tr><td style="padding:18px 18px 6px">
+      <div style="font-family:Georgia,serif;font-size:22px;color:#2A2823">${esc(datos.nombre)}</div>
+      <div style="font-size:12px;color:#6B655A;padding-top:3px">${esc(datos.correo)}</div>
+    </td></tr>
+
+    <tr><td style="padding:10px 15px 0"><table width="100%" cellpadding="0" cellspacing="0">
+      ${fila(NOMBRES.slice(0,4))}${fila(NOMBRES.slice(4,8))}</table></td></tr>
+
+    <tr><td style="padding:14px 18px 0">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:#fff;border:1px solid #DFD9CA;border-radius:10px">
+        <tr><td style="padding:14px 16px">
+          <div style="font-size:10px;letter-spacing:1.4px;color:#1F4E78;font-weight:bold">RESULTADO GENERAL</div>
+          <table width="100%" cellpadding="0" cellspacing="0" style="padding-top:6px"><tr>
+            <td valign="middle" width="130">
+              <div style="font-family:Georgia,serif;font-size:34px;color:#1F4E78;line-height:1">${pct}%</div>
+              <div style="font-size:11px;color:#8E8778;padding-top:2px">${res.total} de ${MAX_TOTAL} puntos</div></td>
+            <td valign="middle" style="font-size:12px;color:#453F35;line-height:1.6;padding-left:10px">
+              Motivadores más presentes: <b style="color:${FACTORES[res.fuertes[0]].hex}">${res.fuertes[0]}</b> y <b style="color:${FACTORES[res.fuertes[1]].hex}">${res.fuertes[1]}</b><br>
+              Focos de atención: <b style="color:${FACTORES[res.atencion[0]].hex}">${res.atencion[0]}</b>, ${res.atencion[1]} y ${res.atencion[2]}
+            </td></tr></table></td></tr></table></td></tr>
+
+    <tr><td style="padding:14px 18px 0">
+      <div style="font-size:10px;letter-spacing:1.4px;color:#1F4E78;font-weight:bold;padding-bottom:7px">LO QUE DICE QUE LO MANTIENE MOTIVADO</div>
+      <div>${elegidos.map(chip).join("")}</div></td></tr>
+    ${avisoBrecha}
+    ${comentario}
+
+    <tr><td style="padding:18px 18px 0">
+      <div style="font-size:10px;letter-spacing:1.4px;color:#1F4E78;font-weight:bold;border-bottom:2px solid #1F4E78;padding-bottom:5px;margin-bottom:12px">DÓNDE ACTUAR — LOS TRES FACTORES MÁS BAJOS</div>
+      <table width="100%" cellpadding="0" cellspacing="0">${res.atencion.map(bloque).join("")}</table></td></tr>
+
+    <tr><td style="padding:4px 18px 0">
+      <div style="font-size:10px;letter-spacing:1.4px;color:#1F4E78;font-weight:bold;border-bottom:2px solid #1F4E78;padding-bottom:5px;margin-bottom:12px">LO QUE YA FUNCIONA</div>
+      <table width="100%" cellpadding="0" cellspacing="0">${res.fuertes.map(bloque).join("")}</table></td></tr>
+
+    <tr><td align="center" style="padding:10px 18px 20px;font-size:10px;color:#A39C8C;letter-spacing:.4px;line-height:1.6">
+      Niveles sobre el promedio de la escala: Alto 4.1-5.0 · Medio alto 3.1-4.0 · Medio 2.1-3.0 · Bajo 1.0-2.0.<br>
+      Los bloques tienen 4 o 5 afirmaciones, por eso el nivel se lee sobre el promedio y no sobre la suma.<br>
+      El detalle de las ${TOTAL_P} respuestas queda en la hoja de registro.<br><br>
+      Instrumento de autopercepción: muestra qué motivadores están presentes y cuáles no, no califica ni etiqueta a la persona.<br>
+      No es una prueba psicométrica validada ni sirve para evaluar el desempeño.<br>
+      Famo Alimentos · Talento Humano · Hecho por Diego Muñoz</td></tr>
+  </table></div>`;
+}
+</script>
+</body>
+</html>
