@@ -86,10 +86,12 @@ input::placeholder,textarea::placeholder{color:#A9A395}
 .barra{flex:1;height:7px;background:#DFD9CA;border-radius:99px;overflow:hidden}
 .barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--azulP),#3F7BAE);border-radius:99px;transition:width .3s ease}
 
-.bloque{margin-top:26px;padding:13px 16px;border-radius:12px;border:1px solid}
-.bloque h3{margin:0;font-size:15px;font-family:var(--serif);font-weight:600}
-.bloque p{margin:3px 0 0;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700}
-.bloque .nota{margin-top:7px;font-size:11.5px;letter-spacing:0;text-transform:none;font-weight:400;color:var(--suave);line-height:1.45}
+/* Separador entre bloques: conserva el color, sin decir de qué bloque se trata */
+.sep{display:flex;align-items:center;gap:10px;margin:30px 0 4px}
+.sep i{height:4px;border-radius:99px;flex:1;opacity:.5}
+.sep b{width:7px;height:7px;border-radius:50%;flex:none}
+.q-nota{margin-top:8px;font-size:12px;color:var(--suave);line-height:1.45;font-weight:400;
+  background:#F4F0E6;border-left:3px solid var(--linea);border-radius:0 7px 7px 0;padding:7px 11px}
 
 .q{background:var(--papel);border:1px solid var(--linea);border-radius:13px;padding:16px 16px 12px;margin-top:12px;scroll-margin-top:80px}
 .q.falta{border-color:var(--roja);background:#FDF6F4}
@@ -121,6 +123,16 @@ input::placeholder,textarea::placeholder{color:#A9A395}
 .chips input:checked + .chip{background:var(--azulP);border-color:var(--azulOsc);color:#fff;box-shadow:0 2px 8px rgba(31,78,120,.28)}
 .chips input:disabled + .chip{opacity:.45}
 .chips input:focus-visible + .chip{outline:2px solid var(--azulP);outline-offset:2px}
+
+/* Conductas por factor elegido */
+.conds{margin-top:24px}
+.conds-cab{border-top:1px solid var(--linea);padding-top:20px}
+.cond{margin-top:14px;background:#FCFAF5;border:1px solid var(--linea);border-left-width:4px;
+  border-radius:0 12px 12px 0;padding:14px 15px}
+.cond .elegiste{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;margin-bottom:5px}
+.cond .preg{font-size:14.5px;font-weight:500;line-height:1.4;margin-bottom:10px;color:var(--tinta)}
+.cond textarea{min-height:78px;background:#fff}
+.cond.falta{border-color:var(--roja);border-left-color:var(--roja);background:#FDF6F4}
 
 .aviso{border-radius:11px;padding:13px 15px;font-size:13.5px;margin-top:16px;border:1px solid}
 .aviso-err{background:var(--rojaBg);border-color:var(--rojaBd);color:#8C3021}
@@ -203,7 +215,17 @@ input::placeholder,textarea::placeholder{color:#A9A395}
     <p class="lead">De los ocho factores del test, elige <b>hasta 3</b> que más influyen para que permanezcas motivado en tu trabajo.</p>
     <div class="chips" id="chips"></div>
     <p id="chCount" style="font-size:12px;color:var(--suave);margin:10px 0 0"></p>
-    <div class="campo" style="margin-top:18px">
+
+    <div class="conds" id="conds" hidden>
+      <div class="conds-cab">
+        <p class="eyebrow" style="margin-bottom:6px">¿Y tú qué haces?</p>
+        <p class="lead" style="margin-bottom:0">Nos interesa lo que ya haces, no lo que la empresa te da.
+        Para cada factor que elegiste, escribe <b>dos o tres conductas concretas</b> de tu día a día.</p>
+      </div>
+      <div id="listaCond"></div>
+    </div>
+
+    <div class="campo" style="margin-top:22px">
       <label for="f_coment">¿Quieres agregar algo? <span class="op">(opcional)</span></label>
       <textarea id="f_coment" placeholder="Lo que escribas aquí lo lee Talento Humano."></textarea>
     </div>
@@ -235,7 +257,7 @@ const CONFIG = {
    INSTRUMENTO — 33 afirmaciones, 8 factores, escala 1-5
    Fuente única: datos.json. No edites este bloque a mano.
    ===================================================================== */
-const DATOS = {"titulo":"Test de Motivadores","subtitulo":"Famo Alimentos · Talento Humano","factores":{"Económico":{"clave":"eco","hex":"#2E7D6B","bg":"#E1EDE9","bd":"#B9D3CB","desc":"Sueldo, bonos y prestaciones.","define":"Qué tanto percibe la persona que lo que recibe corresponde con lo que aporta: compensación, bonos por objetivos, incrementos y prestaciones por encima de la ley."},"Reconocimiento":{"clave":"rec","hex":"#B07A22","bg":"#F6EEDC","bd":"#E4D2A8","desc":"Que el trabajo se vea, se valore y se diga.","define":"Qué tanto percibe la persona que su trabajo se nota: reconocimiento público, retroalimentación del jefe inmediato y valoración de aportaciones que no siempre son cifras."},"Desarrollo":{"clave":"des","hex":"#3D6B8F","bg":"#E2EAF1","bd":"#B7C9D9","desc":"Crecer, aprender y mantenerse al día.","define":"Qué tanto ve la persona camino hacia adelante y formación real: posibilidad de crecimiento, capacitación especializada, actualización y búsqueda propia de aprendizaje."},"Toma de Decisiones":{"clave":"dec","hex":"#6E5091","bg":"#EBE5F2","bd":"#CFC2E0","desc":"Autonomía, autoridad y confianza para decidir.","define":"Qué tanto puede decidir la persona sobre lo suyo: libertad en su departamento, autoridad para resolver, propuestas de mejora que aterrizan y confianza de la dirección."},"Reto y Logros":{"clave":"ret","hex":"#BF6A3C","bg":"#F7E9E0","bd":"#E7C9B3","desc":"Objetivos exigentes y problemas que valga la pena resolver.","define":"Qué tanto el puesto le representa un desafío: gusto por objetivos retadores, facilidad para problemas complejos, participación en proyectos estratégicos e iniciativa para proponerlos."},"Propósito e Impacto":{"clave":"pro","hex":"#1F4E78","bg":"#E0E8F0","bd":"#B4C6DA","desc":"Ver que lo que se hace le sirve a la empresa.","define":"Qué tanto conecta la persona su trabajo diario con el resultado de la organización, y qué tanto orgullo de pertenencia expresa."},"Liderazgo":{"clave":"lid","hex":"#5E7F3C","bg":"#EAF0E1","bd":"#C9D8B4","desc":"El equipo, la confianza y la relación con el jefe.","define":"Qué tanto lo sostiene su entorno: compromiso del equipo, capacidad de conducirlo, ambiente de confianza y relación con el jefe directo.","nota":"Si no tienes personal a tu cargo, responde pensando en tu equipo de trabajo más cercano y en cómo influyes en él."},"Equilibrio y Bienestar":{"clave":"equ","hex":"#99506E","bg":"#F3E6EC","bd":"#DDC0CE","desc":"Tiempo, carga de trabajo y vida personal.","define":"Qué tanto es sostenible su ritmo: tiempo para asuntos personales, carga acorde al puesto, espacio para la vida fuera del trabajo y cuidado del propio bienestar."}},"preguntas":[{"a":"Económico","t":"Recibo una compensación acorde con mis responsabilidades."},{"a":"Económico","t":"Cuento con bonos relacionados con el cumplimiento de objetivos."},{"a":"Económico","t":"Tengo oportunidades de incremento salarial."},{"a":"Económico","t":"La empresa otorga prestaciones adicionales a las que marca la ley."},{"a":"Reconocimiento","t":"Reconocen públicamente mis resultados."},{"a":"Reconocimiento","t":"Recibo retroalimentación de mi jefe inmediato."},{"a":"Reconocimiento","t":"Mi trabajo es valorado."},{"a":"Reconocimiento","t":"Reconocen mis aportaciones aunque no siempre estén relacionadas con mis resultados económicos."},{"a":"Desarrollo","t":"Tengo posibilidades de crecimiento dentro de la empresa."},{"a":"Desarrollo","t":"He participado en programas de capacitación especializada."},{"a":"Desarrollo","t":"Estoy en constante actualización sobre las tendencias de mi departamento."},{"a":"Desarrollo","t":"Busco opciones de capacitación que complementen mi formación académica."},{"a":"Toma de Decisiones","t":"Tengo libertad para tomar decisiones relacionadas con mi departamento."},{"a":"Toma de Decisiones","t":"Asumo la autoridad para resolver los problemas que se presentan."},{"a":"Toma de Decisiones","t":"Propongo cambios y mejoras en la organización."},{"a":"Toma de Decisiones","t":"Las mejoras que propongo han generado impacto en la empresa."},{"a":"Toma de Decisiones","t":"Tengo la confianza de la dirección para tomar decisiones importantes."},{"a":"Reto y Logros","t":"Me gusta trabajar con objetivos que representen un reto profesional."},{"a":"Reto y Logros","t":"Se me facilita resolver problemas complejos."},{"a":"Reto y Logros","t":"Participo en proyectos estratégicos de la empresa."},{"a":"Reto y Logros","t":"Propongo proyectos sin necesidad de que me sean solicitados."},{"a":"Propósito e Impacto","t":"Mi trabajo contribuye a los objetivos de la empresa."},{"a":"Propósito e Impacto","t":"Mis resultados generan impacto en los resultados de la organización."},{"a":"Propósito e Impacto","t":"Mi participación contribuye a las decisiones para el crecimiento de la empresa."},{"a":"Propósito e Impacto","t":"Me siento orgulloso de pertenecer a la empresa."},{"a":"Liderazgo","t":"Cuento con un equipo comprometido."},{"a":"Liderazgo","t":"Lidero a mi equipo de trabajo con base en mi experiencia, conocimientos y capacidad para tomar decisiones."},{"a":"Liderazgo","t":"Trabajo en un ambiente donde existe confianza."},{"a":"Liderazgo","t":"Tengo buena relación con mi jefe directo."},{"a":"Equilibrio y Bienestar","t":"Cuento con tiempo suficiente para atender asuntos personales."},{"a":"Equilibrio y Bienestar","t":"Mi carga de trabajo está acorde con mi posición."},{"a":"Equilibrio y Bienestar","t":"Me gusta dedicar tiempo a mis hobbies o actividades personales después de mi jornada laboral."},{"a":"Equilibrio y Bienestar","t":"Busco condiciones que favorezcan mi bienestar físico, emocional y personal."}],"lectura":{"Económico":{"Alto":"Percibe que su compensación, bonos y prestaciones corresponden con lo que aporta. Hoy el dinero no es una fuente de desmotivación.","Medio alto":"La compensación le parece razonable, pero hay un componente flojo: el bono, la revisión salarial o las prestaciones adicionales.","Medio":"La percepción de pago justo está a la mitad. Puede convertirse en motivo de salida si coincide con reconocimiento bajo.","Bajo":"Considera que lo que recibe no corresponde con sus responsabilidades. De los ocho factores, este es el de mayor riesgo de rotación inmediata."},"Reconocimiento":{"Alto":"Su trabajo se ve y se le dice. Recibe retroalimentación y siente que sus aportaciones cuentan más allá del número.","Medio alto":"Se siente valorado, aunque el reconocimiento llega de forma irregular o casi siempre atado a resultados económicos.","Medio":"Recibe reconocimiento a medias. Es común que le llegue el señalamiento del error y no el del acierto.","Bajo":"No percibe que su trabajo se reconozca. Es el factor más barato de corregir y el que más rápido se nota."},"Desarrollo":{"Alto":"Está aprendiendo y ve camino hacia adelante. Se actualiza por iniciativa propia.","Medio alto":"Se capacita y se mantiene al día, pero la ruta de crecimiento dentro de la empresa no le queda clara.","Medio":"Ha tenido algo de formación, aunque no de manera sostenida ni conectada con su puesto.","Bajo":"No ve crecimiento ni formación. En perfiles jóvenes o técnicos este factor pesa tanto como el sueldo."},"Toma de Decisiones":{"Alto":"Decide, resuelve y propone. Tiene la confianza de la dirección y la usa.","Medio alto":"Toma decisiones en su terreno y propone mejoras, pero varias de sus propuestas no aterrizan.","Medio":"Su margen de decisión es limitado o no lo tiene claro. Suele consultar más de lo necesario.","Bajo":"Percibe que no puede decidir sobre lo suyo. Esto apaga la iniciativa aunque el resto de los factores esté bien."},"Reto y Logros":{"Alto":"Busca dificultad. Propone proyectos por iniciativa propia y participa en lo estratégico.","Medio alto":"Le gusta el reto y resuelve bien, pero participa poco en proyectos estratégicos o propone poco.","Medio":"Responde a lo que se le pide, sin buscar más. Puede ser falta de espacio, no de capacidad.","Bajo":"El puesto no le representa reto o no se siente en condiciones de asumirlo. Hay riesgo de aburrimiento o de desgaste, según el caso."},"Propósito e Impacto":{"Alto":"Ve la línea entre lo que hace todos los días y los resultados de la empresa, y expresa orgullo de pertenecer.","Medio alto":"Sabe que su trabajo sirve, pero no ve cómo influye en las decisiones de crecimiento.","Medio":"La conexión entre su trabajo y el resultado de la empresa es difusa.","Bajo":"No ve para qué sirve lo que hace ni se siente parte. Es el factor que más pesa en la decisión de quedarse."},"Liderazgo":{"Alto":"Tiene equipo comprometido, ambiente de confianza y buena relación con su jefe. El entorno lo sostiene.","Medio alto":"El entorno es bueno, con un punto flojo: el compromiso del equipo o la confianza del ambiente.","Medio":"La relación con el jefe o el ambiente de confianza está a media. Suele arrastrar a los demás factores hacia abajo.","Bajo":"El entorno de trabajo no lo sostiene: falta confianza, equipo o relación con el jefe. Conviene atender esto primero; lo demás no avanza sin ello."},"Equilibrio y Bienestar":{"Alto":"Su carga es acorde y tiene tiempo para su vida personal. El ritmo es sostenible.","Medio alto":"El equilibrio se sostiene, aunque en temporadas la carga se le acerca al límite.","Medio":"La carga de trabajo y el tiempo personal están en tensión. A este nivel el desgaste ya empieza a acumularse.","Bajo":"No tiene tiempo ni carga acorde. Es la señal más clara de desgaste y suele anticipar una renuncia."}},"acciones":{"Económico":{"Alto":["Sostener la claridad: que sepa cómo se calcula su bono y cuándo se revisa su sueldo.","No es la palanca a mover con esta persona; el esfuerzo rinde más en otro factor."],"Medio alto":["Preguntar en la siguiente sesión uno a uno cuál de los tres componentes ve más débil.","Explicar el paquete completo: muchas veces el valor real de las prestaciones no se conoce."],"Medio":["Revisar su posición contra el tabulador interno y contra el mercado local.","Si no hay margen de incremento, compensar con lo que sí está en la mano: reconocimiento y desarrollo."],"Bajo":["Revisión de sueldo contra tabulador y mercado en menos de 30 días.","Conversación directa: qué esperaba y con qué lo está comparando."]},"Reconocimiento":{"Alto":["Pedirle que sea quien reconozca públicamente a otros; el reconocimiento se contagia.","Sostener la frecuencia de la retroalimentación: se pierde rápido."],"Medio alto":["Fijar una retroalimentación breve al mes con su jefe inmediato.","Reconocer también las aportaciones que no se traducen en cifras."],"Medio":["Entrenar al jefe inmediato en retroalimentación específica y oportuna.","Incluirlo en el espacio donde se dan a conocer los resultados del área."],"Bajo":["Retroalimentación de su jefe inmediato esta misma semana, con hechos concretos.","Reconocimiento público de un logro suyo en la siguiente junta de área."]},"Desarrollo":{"Alto":["Darle un rol de instructor interno: enseñar consolida y motiva.","Mostrarle el siguiente escalón concreto, no la promesa genérica de crecer."],"Medio alto":["Dibujar con la persona la ruta: qué puesto sigue y qué le falta para llegar.","Asignarle una capacitación especializada dentro del plan del próximo semestre."],"Medio":["Incluirlo en la detección de necesidades de capacitación del área.","Fijar un objetivo de aprendizaje concreto para el trimestre, con fecha."],"Bajo":["Conversación de carrera con su jefe y Talento Humano dentro del mes.","Una capacitación asignada en el trimestre, aunque sea corta."]},"Toma de Decisiones":{"Alto":["Ampliar su margen: delegarle una decisión que hoy sube a dirección.","Considerarlo para proyectos que requieran criterio propio."],"Medio alto":["Dar respuesta formal a lo que propone, aunque sea un no razonado.","Definir por escrito hasta dónde puede decidir sin consultar."],"Medio":["Delimitar por escrito su autoridad: qué decide, qué consulta y qué informa.","Acompañarlo en dos o tres decisiones para que gane confianza."],"Bajo":["Revisar con su jefe qué decisiones se pueden delegar de inmediato.","Escuchar y responder una propuesta suya en las próximas dos semanas."]},"Reto y Logros":{"Alto":["Asignarle un proyecto con dificultad real; el trabajo rutinario lo desgasta.","Cuidar que el reto no se vuelva sobrecarga: revisar su Equilibrio y Bienestar."],"Medio alto":["Sumarlo a un proyecto estratégico, aunque sea como parte del equipo.","Abrir un espacio formal para que presente propuestas."],"Medio":["Fijarle un objetivo con dificultad medible este trimestre.","Preguntarle qué problema del área le gustaría resolver."],"Bajo":["Distinguir si es aburrimiento o desgaste: conversación con su jefe inmediato.","Si es aburrimiento, rotar una responsabilidad; si es desgaste, revisar carga y formación."]},"Propósito e Impacto":{"Alto":["Darle voz hacia dentro de la empresa: la convicción arrastra.","Compartirle el dato duro del impacto de su área; refuerza lo que ya siente."],"Medio alto":["Compartirle los resultados del área con números, no solo con discurso.","Involucrarlo en una decisión de mejora que lo afecte directamente."],"Medio":["Explicarle en concreto qué indicador de la empresa mueve su puesto.","Cerrar el ciclo: contarle qué pasó con lo que entregó."],"Bajo":["Conversación con su jefe sobre el para qué de su puesto, con ejemplos reales.","Revisar si el orgullo de pertenencia se perdió por un hecho concreto y atenderlo."]},"Liderazgo":{"Alto":["Documentar qué hace bien con su equipo y compartirlo con otros jefes.","Cuidar que el buen ambiente no dependa de una sola persona."],"Medio alto":["Identificar en la siguiente sesión uno a uno cuál de los dos es el punto flojo.","Herramientas de liderazgo de equipo si el punto flojo es el equipo."],"Medio":["Escuchar por separado a la persona y a su jefe inmediato.","Revisar el clima del área completa: rara vez es un caso aislado."],"Bajo":["Entrevista con Talento Humano dentro de la semana, por separado.","Revisar el clima del área y la carga de liderazgo del jefe inmediato."]},"Equilibrio y Bienestar":{"Alto":["Cuidarlo si va a entrar a un proyecto exigente.","Usar su carga como referencia para calibrar la del resto del área."],"Medio alto":["Revisar la distribución del trabajo en los picos del área.","Confirmar que las horas extra sean excepción y no la norma."],"Medio":["Medir su carga real contra la que corresponde al puesto.","Acordar límites de horario que se respeten por ambas partes."],"Bajo":["Revisión inmediata de carga y horarios con su jefe.","Acordar medidas concretas y volver a preguntar en 30 días."]}}};
+const DATOS = {"titulo":"Test de Motivadores","subtitulo":"Famo Alimentos · Talento Humano","factores":{"Económico":{"clave":"eco","hex":"#2E7D6B","bg":"#E1EDE9","bd":"#B9D3CB","desc":"Sueldo, bonos y prestaciones.","define":"Qué tanto percibe la persona que lo que recibe corresponde con lo que aporta: compensación, bonos por objetivos, incrementos y prestaciones por encima de la ley.","pregunta":"¿Qué haces en tu día a día que sostenga ese valor? Piensa en lo que entregas, no en lo que te gustaría recibir.","ejemplo":"Ej. cumplo las metas de mi área cada mes, busco ahorros en mi proceso, tomo trabajo adicional cuando hace falta"},"Reconocimiento":{"clave":"rec","hex":"#B07A22","bg":"#F6EEDC","bd":"#E4D2A8","desc":"Que el trabajo se vea, se valore y se diga.","define":"Qué tanto percibe la persona que su trabajo se nota: reconocimiento público, retroalimentación del jefe inmediato y valoración de aportaciones que no siempre son cifras.","pregunta":"¿Qué haces para que tu trabajo y el de tu equipo se vean?","ejemplo":"Ej. reporto mis avances sin que me los pidan, presento resultados en la junta, reconozco en público a quien me ayudó"},"Desarrollo":{"clave":"des","hex":"#3D6B8F","bg":"#E2EAF1","bd":"#B7C9D9","desc":"Crecer, aprender y mantenerse al día.","define":"Qué tanto ve la persona camino hacia adelante y formación real: posibilidad de crecimiento, capacitación especializada, actualización y búsqueda propia de aprendizaje.","pregunta":"¿Qué haces por tu cuenta para seguir aprendiendo?","ejemplo":"Ej. tomo cursos fuera de mi horario, leo sobre el sector, pido que me asignen tareas que todavía no domino"},"Toma de Decisiones":{"clave":"dec","hex":"#6E5091","bg":"#EBE5F2","bd":"#CFC2E0","desc":"Autonomía, autoridad y confianza para decidir.","define":"Qué tanto puede decidir la persona sobre lo suyo: libertad en su departamento, autoridad para resolver, propuestas de mejora que aterrizan y confianza de la dirección.","pregunta":"¿Qué decides tú sin que te lo pidan, y qué haces cuando algo se atora?","ejemplo":"Ej. resuelvo en el momento lo que está en mi alcance, propongo cambios por escrito, asumo la consecuencia de lo que decido"},"Reto y Logros":{"clave":"ret","hex":"#BF6A3C","bg":"#F7E9E0","bd":"#E7C9B3","desc":"Objetivos exigentes y problemas que valga la pena resolver.","define":"Qué tanto el puesto le representa un desafío: gusto por objetivos retadores, facilidad para problemas complejos, participación en proyectos estratégicos e iniciativa para proponerlos.","pregunta":"¿Cómo buscas el reto cuando el trabajo se vuelve rutina?","ejemplo":"Ej. levanto la mano para los proyectos difíciles, me pongo metas más altas que las que me piden, entro donde nadie quiere entrar"},"Propósito e Impacto":{"clave":"pro","hex":"#1F4E78","bg":"#E0E8F0","bd":"#B4C6DA","desc":"Ver que lo que se hace le sirve a la empresa.","define":"Qué tanto conecta la persona su trabajo diario con el resultado de la organización, y qué tanto orgullo de pertenencia expresa.","pregunta":"¿Qué haces para que lo que entregas le sirva a la empresa y no solo a tu área?","ejemplo":"Ej. reviso cómo afecta mi trabajo a las otras áreas, le explico a mi equipo para qué sirve lo que hacemos"},"Liderazgo":{"clave":"lid","hex":"#5E7F3C","bg":"#EAF0E1","bd":"#C9D8B4","desc":"El equipo, la confianza y la relación con el jefe.","define":"Qué tanto lo sostiene su entorno: compromiso del equipo, capacidad de conducirlo, ambiente de confianza y relación con el jefe directo.","pregunta":"¿Qué haces para que tu equipo y el ambiente de trabajo funcionen?","ejemplo":"Ej. escucho antes de decidir, doy la cara por mi equipo, hablo directo cuando hay un problema"},"Equilibrio y Bienestar":{"clave":"equ","hex":"#99506E","bg":"#F3E6EC","bd":"#DDC0CE","desc":"Tiempo, carga de trabajo y vida personal.","define":"Qué tanto es sostenible su ritmo: tiempo para asuntos personales, carga acorde al puesto, espacio para la vida fuera del trabajo y cuidado del propio bienestar.","pregunta":"¿Qué haces para cuidar tu tiempo y tu bienestar sin que el trabajo se caiga?","ejemplo":"Ej. organizo mi día para salir a tiempo, delego lo que se puede, respeto mis horas de descanso"}},"preguntas":[{"a":"Económico","t":"Recibo una compensación acorde con mis responsabilidades."},{"a":"Económico","t":"Cuento con bonos relacionados con el cumplimiento de objetivos."},{"a":"Económico","t":"Tengo oportunidades de incremento salarial."},{"a":"Económico","t":"La empresa otorga prestaciones adicionales a las que marca la ley."},{"a":"Reconocimiento","t":"Reconocen públicamente mis resultados."},{"a":"Reconocimiento","t":"Recibo retroalimentación de mi jefe inmediato."},{"a":"Reconocimiento","t":"Mi trabajo es valorado."},{"a":"Reconocimiento","t":"Reconocen mis aportaciones aunque no siempre estén relacionadas con mis resultados económicos."},{"a":"Desarrollo","t":"Tengo posibilidades de crecimiento dentro de la empresa."},{"a":"Desarrollo","t":"He participado en programas de capacitación especializada."},{"a":"Desarrollo","t":"Estoy en constante actualización sobre las tendencias de mi departamento."},{"a":"Desarrollo","t":"Busco opciones de capacitación que complementen mi formación académica."},{"a":"Toma de Decisiones","t":"Tengo libertad para tomar decisiones relacionadas con mi departamento."},{"a":"Toma de Decisiones","t":"Asumo la autoridad para resolver los problemas que se presentan."},{"a":"Toma de Decisiones","t":"Propongo cambios y mejoras en la organización."},{"a":"Toma de Decisiones","t":"Las mejoras que propongo han generado impacto en la empresa."},{"a":"Toma de Decisiones","t":"Tengo la confianza de la dirección para tomar decisiones importantes."},{"a":"Reto y Logros","t":"Me gusta trabajar con objetivos que representen un reto profesional."},{"a":"Reto y Logros","t":"Se me facilita resolver problemas complejos."},{"a":"Reto y Logros","t":"Participo en proyectos estratégicos de la empresa."},{"a":"Reto y Logros","t":"Propongo proyectos sin necesidad de que me sean solicitados."},{"a":"Propósito e Impacto","t":"Mi trabajo contribuye a los objetivos de la empresa."},{"a":"Propósito e Impacto","t":"Mis resultados generan impacto en los resultados de la organización."},{"a":"Propósito e Impacto","t":"Mi participación contribuye a las decisiones para el crecimiento de la empresa."},{"a":"Propósito e Impacto","t":"Me siento orgulloso de pertenecer a la empresa."},{"a":"Liderazgo","t":"Cuento con un equipo comprometido.","nota":"Si no tienes personal a tu cargo, responde pensando en tu equipo de trabajo más cercano y en cómo influyes en él."},{"a":"Liderazgo","t":"Lidero a mi equipo de trabajo con base en mi experiencia, conocimientos y capacidad para tomar decisiones.","nota":"Si no tienes personal a tu cargo, responde pensando en tu equipo de trabajo más cercano y en cómo influyes en él."},{"a":"Liderazgo","t":"Trabajo en un ambiente donde existe confianza."},{"a":"Liderazgo","t":"Tengo buena relación con mi jefe directo."},{"a":"Equilibrio y Bienestar","t":"Cuento con tiempo suficiente para atender asuntos personales."},{"a":"Equilibrio y Bienestar","t":"Mi carga de trabajo está acorde con mi posición."},{"a":"Equilibrio y Bienestar","t":"Me gusta dedicar tiempo a mis hobbies o actividades personales después de mi jornada laboral."},{"a":"Equilibrio y Bienestar","t":"Busco condiciones que favorezcan mi bienestar físico, emocional y personal."}],"lectura":{"Económico":{"Alto":"Percibe que su compensación, bonos y prestaciones corresponden con lo que aporta. Hoy el dinero no es una fuente de desmotivación.","Medio alto":"La compensación le parece razonable, pero hay un componente flojo: el bono, la revisión salarial o las prestaciones adicionales.","Medio":"La percepción de pago justo está a la mitad. Puede convertirse en motivo de salida si coincide con reconocimiento bajo.","Bajo":"Considera que lo que recibe no corresponde con sus responsabilidades. De los ocho factores, este es el de mayor riesgo de rotación inmediata."},"Reconocimiento":{"Alto":"Su trabajo se ve y se le dice. Recibe retroalimentación y siente que sus aportaciones cuentan más allá del número.","Medio alto":"Se siente valorado, aunque el reconocimiento llega de forma irregular o casi siempre atado a resultados económicos.","Medio":"Recibe reconocimiento a medias. Es común que le llegue el señalamiento del error y no el del acierto.","Bajo":"No percibe que su trabajo se reconozca. Es el factor más barato de corregir y el que más rápido se nota."},"Desarrollo":{"Alto":"Está aprendiendo y ve camino hacia adelante. Se actualiza por iniciativa propia.","Medio alto":"Se capacita y se mantiene al día, pero la ruta de crecimiento dentro de la empresa no le queda clara.","Medio":"Ha tenido algo de formación, aunque no de manera sostenida ni conectada con su puesto.","Bajo":"No ve crecimiento ni formación. En perfiles jóvenes o técnicos este factor pesa tanto como el sueldo."},"Toma de Decisiones":{"Alto":"Decide, resuelve y propone. Tiene la confianza de la dirección y la usa.","Medio alto":"Toma decisiones en su terreno y propone mejoras, pero varias de sus propuestas no aterrizan.","Medio":"Su margen de decisión es limitado o no lo tiene claro. Suele consultar más de lo necesario.","Bajo":"Percibe que no puede decidir sobre lo suyo. Esto apaga la iniciativa aunque el resto de los factores esté bien."},"Reto y Logros":{"Alto":"Busca dificultad. Propone proyectos por iniciativa propia y participa en lo estratégico.","Medio alto":"Le gusta el reto y resuelve bien, pero participa poco en proyectos estratégicos o propone poco.","Medio":"Responde a lo que se le pide, sin buscar más. Puede ser falta de espacio, no de capacidad.","Bajo":"El puesto no le representa reto o no se siente en condiciones de asumirlo. Hay riesgo de aburrimiento o de desgaste, según el caso."},"Propósito e Impacto":{"Alto":"Ve la línea entre lo que hace todos los días y los resultados de la empresa, y expresa orgullo de pertenecer.","Medio alto":"Sabe que su trabajo sirve, pero no ve cómo influye en las decisiones de crecimiento.","Medio":"La conexión entre su trabajo y el resultado de la empresa es difusa.","Bajo":"No ve para qué sirve lo que hace ni se siente parte. Es el factor que más pesa en la decisión de quedarse."},"Liderazgo":{"Alto":"Tiene equipo comprometido, ambiente de confianza y buena relación con su jefe. El entorno lo sostiene.","Medio alto":"El entorno es bueno, con un punto flojo: el compromiso del equipo o la confianza del ambiente.","Medio":"La relación con el jefe o el ambiente de confianza está a media. Suele arrastrar a los demás factores hacia abajo.","Bajo":"El entorno de trabajo no lo sostiene: falta confianza, equipo o relación con el jefe. Conviene atender esto primero; lo demás no avanza sin ello."},"Equilibrio y Bienestar":{"Alto":"Su carga es acorde y tiene tiempo para su vida personal. El ritmo es sostenible.","Medio alto":"El equilibrio se sostiene, aunque en temporadas la carga se le acerca al límite.","Medio":"La carga de trabajo y el tiempo personal están en tensión. A este nivel el desgaste ya empieza a acumularse.","Bajo":"No tiene tiempo ni carga acorde. Es la señal más clara de desgaste y suele anticipar una renuncia."}},"acciones":{"Económico":{"Alto":["Sostener la claridad: que sepa cómo se calcula su bono y cuándo se revisa su sueldo.","No es la palanca a mover con esta persona; el esfuerzo rinde más en otro factor."],"Medio alto":["Preguntar en la siguiente sesión uno a uno cuál de los tres componentes ve más débil.","Explicar el paquete completo: muchas veces el valor real de las prestaciones no se conoce."],"Medio":["Revisar su posición contra el tabulador interno y contra el mercado local.","Si no hay margen de incremento, compensar con lo que sí está en la mano: reconocimiento y desarrollo."],"Bajo":["Revisión de sueldo contra tabulador y mercado en menos de 30 días.","Conversación directa: qué esperaba y con qué lo está comparando."]},"Reconocimiento":{"Alto":["Pedirle que sea quien reconozca públicamente a otros; el reconocimiento se contagia.","Sostener la frecuencia de la retroalimentación: se pierde rápido."],"Medio alto":["Fijar una retroalimentación breve al mes con su jefe inmediato.","Reconocer también las aportaciones que no se traducen en cifras."],"Medio":["Entrenar al jefe inmediato en retroalimentación específica y oportuna.","Incluirlo en el espacio donde se dan a conocer los resultados del área."],"Bajo":["Retroalimentación de su jefe inmediato esta misma semana, con hechos concretos.","Reconocimiento público de un logro suyo en la siguiente junta de área."]},"Desarrollo":{"Alto":["Darle un rol de instructor interno: enseñar consolida y motiva.","Mostrarle el siguiente escalón concreto, no la promesa genérica de crecer."],"Medio alto":["Dibujar con la persona la ruta: qué puesto sigue y qué le falta para llegar.","Asignarle una capacitación especializada dentro del plan del próximo semestre."],"Medio":["Incluirlo en la detección de necesidades de capacitación del área.","Fijar un objetivo de aprendizaje concreto para el trimestre, con fecha."],"Bajo":["Conversación de carrera con su jefe y Talento Humano dentro del mes.","Una capacitación asignada en el trimestre, aunque sea corta."]},"Toma de Decisiones":{"Alto":["Ampliar su margen: delegarle una decisión que hoy sube a dirección.","Considerarlo para proyectos que requieran criterio propio."],"Medio alto":["Dar respuesta formal a lo que propone, aunque sea un no razonado.","Definir por escrito hasta dónde puede decidir sin consultar."],"Medio":["Delimitar por escrito su autoridad: qué decide, qué consulta y qué informa.","Acompañarlo en dos o tres decisiones para que gane confianza."],"Bajo":["Revisar con su jefe qué decisiones se pueden delegar de inmediato.","Escuchar y responder una propuesta suya en las próximas dos semanas."]},"Reto y Logros":{"Alto":["Asignarle un proyecto con dificultad real; el trabajo rutinario lo desgasta.","Cuidar que el reto no se vuelva sobrecarga: revisar su Equilibrio y Bienestar."],"Medio alto":["Sumarlo a un proyecto estratégico, aunque sea como parte del equipo.","Abrir un espacio formal para que presente propuestas."],"Medio":["Fijarle un objetivo con dificultad medible este trimestre.","Preguntarle qué problema del área le gustaría resolver."],"Bajo":["Distinguir si es aburrimiento o desgaste: conversación con su jefe inmediato.","Si es aburrimiento, rotar una responsabilidad; si es desgaste, revisar carga y formación."]},"Propósito e Impacto":{"Alto":["Darle voz hacia dentro de la empresa: la convicción arrastra.","Compartirle el dato duro del impacto de su área; refuerza lo que ya siente."],"Medio alto":["Compartirle los resultados del área con números, no solo con discurso.","Involucrarlo en una decisión de mejora que lo afecte directamente."],"Medio":["Explicarle en concreto qué indicador de la empresa mueve su puesto.","Cerrar el ciclo: contarle qué pasó con lo que entregó."],"Bajo":["Conversación con su jefe sobre el para qué de su puesto, con ejemplos reales.","Revisar si el orgullo de pertenencia se perdió por un hecho concreto y atenderlo."]},"Liderazgo":{"Alto":["Documentar qué hace bien con su equipo y compartirlo con otros jefes.","Cuidar que el buen ambiente no dependa de una sola persona."],"Medio alto":["Identificar en la siguiente sesión uno a uno cuál de los dos es el punto flojo.","Herramientas de liderazgo de equipo si el punto flojo es el equipo."],"Medio":["Escuchar por separado a la persona y a su jefe inmediato.","Revisar el clima del área completa: rara vez es un caso aislado."],"Bajo":["Entrevista con Talento Humano dentro de la semana, por separado.","Revisar el clima del área y la carga de liderazgo del jefe inmediato."]},"Equilibrio y Bienestar":{"Alto":["Cuidarlo si va a entrar a un proyecto exigente.","Usar su carga como referencia para calibrar la del resto del área."],"Medio alto":["Revisar la distribución del trabajo en los picos del área.","Confirmar que las horas extra sean excepción y no la norma."],"Medio":["Medir su carga real contra la que corresponde al puesto.","Acordar límites de horario que se respeten por ambas partes."],"Bajo":["Revisión inmediata de carga y horarios con su jefe.","Acordar medidas concretas y volver a preguntar en 30 días."]}}};
 const FACTORES = DATOS.factores, PREGUNTAS = DATOS.preguntas, LECTURA = DATOS.lectura, ACCIONES = DATOS.acciones;
 const NOMBRES = Object.keys(FACTORES);
 const ETIQUETAS = ["Nunca","Rara vez","Algunas veces","Frecuentemente","Casi siempre"];
@@ -256,7 +278,7 @@ const NIVEL_COLOR = {"Alto":"#2E7D6B","Medio alto":"#3D6B8F","Medio":"#B07A22","
 const $ = s => document.querySelector(s);
 const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const respuestas = new Array(TOTAL_P).fill(null);
-let elegidos = [], enviando = false, intentos = 0, detalle = "";
+let elegidos = [], conductas = {}, enviando = false, intentos = 0, detalle = "";
 
 function nivel(prom){ for(const [min,nv] of UMBRALES) if(prom>=min) return nv; return "Bajo"; }
 
@@ -297,17 +319,20 @@ $("#btnVolver").addEventListener("click", ()=>{ $("#p2").hidden=true; $("#p1").h
   let html = "", actual = "";
   PREGUNTAS.forEach((q,i)=>{
     const n = i+1, A = FACTORES[q.a];
+    /* Los bloques no se nombran: quien contesta no sabe qué mide cada grupo.
+       Solo queda un separador del color del factor. */
     if(q.a !== actual){
+      if(actual) html += `<div class="sep" aria-hidden="true"><i style="background:${A.hex}"></i>
+        <b style="background:${A.hex}"></b><i style="background:${A.hex}"></i></div>`;
       actual = q.a;
-      const nota = A.nota ? `<div class="nota">${A.nota}</div>` : "";
-      html += `<div class="bloque" style="background:${A.bg};border-color:${A.bd}">
-        <h3 style="color:${A.hex}">${q.a}</h3><p style="color:${A.hex}">${A.desc}</p>${nota}</div>`;
     }
     const opts = ETIQUETAS.map((et,k)=>`
       <label><input type="radio" name="q${n}" value="${k+1}">
         <span class="op-cara"><b>${k+1}</b><span>${et}</span></span></label>`).join("");
+    const nota = q.nota ? `<div class="q-nota">${esc(q.nota)}</div>` : "";
     html += `<article class="q" id="q${n}">
-      <div class="q-cab"><span class="q-num" style="background:${A.hex}">${n}</span><span class="q-txt">${esc(q.t)}</span></div>
+      <div class="q-cab"><span class="q-num" style="background:${A.hex}">${n}</span>
+        <div style="flex:1"><span class="q-txt">${esc(q.t)}</span>${nota}</div></div>
       <div class="opts" role="radiogroup" aria-label="Afirmación ${n}">${opts}</div></article>`;
   });
   $("#listaQ").innerHTML = html;
@@ -325,7 +350,8 @@ function refrescarProgreso(){
 }
 function guardarAvance(){
   if(!CONFIG.GUARDAR_AVANCE) return;
-  guardar(CLAVE, {r:respuestas, n:$("#f_nombre").value, c:$("#f_correo").value, e:elegidos, m:$("#f_coment").value});
+  guardar(CLAVE, {r:respuestas, n:$("#f_nombre").value, c:$("#f_correo").value,
+                  e:elegidos, k:conductas, m:$("#f_coment").value});
 }
 
 $("#listaQ").addEventListener("change", ev=>{
@@ -337,10 +363,26 @@ $("#listaQ").addEventListener("change", ev=>{
   guardarAvance();
 });
 
+/* Una caja de texto por cada factor elegido. Se conserva lo ya escrito. */
+function pintarConductas(){
+  const cont = $("#listaCond");
+  [...cont.querySelectorAll("textarea")].forEach(t=> conductas[t.dataset.f] = t.value);
+  $("#conds").hidden = elegidos.length === 0;
+  cont.innerHTML = NOMBRES.filter(a=> elegidos.indexOf(a) >= 0).map(a=>{
+    const A = FACTORES[a];
+    return `<div class="cond" id="cond_${A.clave}" style="border-left-color:${A.hex}">
+      <div class="elegiste" style="color:${A.hex}">Elegiste ${esc(a)}</div>
+      <div class="preg">${esc(A.pregunta)}</div>
+      <textarea data-f="${esc(a)}" placeholder="${esc(A.ejemplo)}">${esc(conductas[a]||"")}</textarea>
+    </div>`;
+  }).join("");
+}
+
 function sincronizarChips(){
   const cajas = [...document.querySelectorAll(".ch")];
   elegidos = cajas.filter(c=>c.checked).map(c=>c.value);
   cajas.forEach(c=> c.disabled = !c.checked && elegidos.length >= MAX_ELECCION);
+  pintarConductas();
   $("#chCount").textContent = elegidos.length === 0
     ? `Puedes elegir hasta ${MAX_ELECCION}.`
     : `Llevas ${elegidos.length} de ${MAX_ELECCION}` + (elegidos.length >= MAX_ELECCION
@@ -349,6 +391,12 @@ function sincronizarChips(){
 sincronizarChips();
 $("#chips").addEventListener("change", ()=>{ sincronizarChips(); guardarAvance(); });
 $("#f_coment").addEventListener("input", guardarAvance);
+$("#listaCond").addEventListener("input", ev=>{
+  if(ev.target.tagName !== "TEXTAREA") return;
+  conductas[ev.target.dataset.f] = ev.target.value;
+  ev.target.closest(".cond").classList.remove("falta");
+  guardarAvance();
+});
 
 /* Recupera un avance previo, si lo hay */
 (function recuperar(){
@@ -364,6 +412,7 @@ $("#f_coment").addEventListener("input", guardarAvance);
   if(g.n) $("#f_nombre").value = g.n;
   if(g.c) $("#f_correo").value = g.c;
   if(g.m) $("#f_coment").value = g.m;
+  if(g.k && typeof g.k === "object") conductas = g.k;
   if(Array.isArray(g.e)) g.e.forEach(v=>{
     const c = [...document.querySelectorAll(".ch")].find(x=>x.value===v);
     if(c) c.checked = true;
@@ -399,6 +448,15 @@ async function enviar(){
     $("#chips").scrollIntoView({block:"center",behavior:"smooth"});
     return;
   }
+  const sinConducta = elegidos.filter(a => (conductas[a]||"").trim().length < 10);
+  if(sinConducta.length){
+    sinConducta.forEach(a=> document.getElementById("cond_"+FACTORES[a].clave).classList.add("falta"));
+    const lista = sinConducta.map(a=>`“${esc(a)}”`);
+    const nombres = lista.length > 1 ? lista.slice(0,-1).join(", ") + " y " + lista[lista.length-1] : lista[0];
+    error("#err2", `Falta que escribas qué haces respecto a ${nombres}. Con dos o tres conductas concretas basta.`);
+    document.getElementById("cond_"+FACTORES[sinConducta[0]].clave).scrollIntoView({block:"center",behavior:"smooth"});
+    return;
+  }
   enviando = true; intentos++;
   const btn = $("#btnEnviar"); btn.disabled = true; btn.textContent = "Enviando…";
 
@@ -416,14 +474,18 @@ async function enviar(){
     .concat(NOMBRES.map(a=>a+" (prom)"))
     .concat(NOMBRES.map(a=>a+" (nivel)"))
     .concat(["Total","General %","Motivador más fuerte","Foco de atención",
-             "Factores que declara","Brechas declaradas","Comentario"])
+             "Factores que declara","Brechas declaradas"])
+    .concat(NOMBRES.map(a=>"Conductas · "+a))
+    .concat(["Comentario"])
     .concat(PREGUNTAS.map((q,i)=>"P"+(i+1)));
   const brechas = elegidos.filter(a=>["Medio","Bajo"].indexOf(nivel(res.prom[a]))>=0);
   const valores = [datos.fecha, datos.hora, datos.nombre, datos.correo]
     .concat(NOMBRES.map(a=>res.prom[a].toFixed(2)))
     .concat(NOMBRES.map(a=>nivel(res.prom[a])))
     .concat([res.total, (res.general*100).toFixed(1), res.orden[0], res.orden[res.orden.length-1],
-             elegidos.join(" · "), brechas.join(" · ") || "ninguna", datos.coment])
+             elegidos.join(" · "), brechas.join(" · ") || "ninguna"])
+    .concat(NOMBRES.map(a=> (conductas[a]||"").trim()))
+    .concat([datos.coment])
     .concat(respuestas);
 
   let ok = false;
@@ -488,6 +550,7 @@ function cerrar(ok, datos){
                "Fecha: "+datos.fecha+" "+datos.hora, ""];
     respuestas.forEach((v,i)=> L.push(String(i+1).padStart(2,"0")+": "+v));
     L.push("", "Factores que declara: "+elegidos.join(", "));
+    elegidos.forEach(a=> L.push("  - "+a+": "+(conductas[a]||"").trim()));
     if(datos.coment) L.push("Comentario: "+datos.coment);
     error("#err2", `El envío automático sigue sin responder. Usa este respaldo para que tus respuestas no se pierdan:
       <a class="btn" style="margin-top:10px;background:#8C3021" href="mailto:${CONFIG.CORREO_DESTINO}?subject=${asunto}&body=${encodeURIComponent(L.join("\n"))}">Enviar por correo</a>`);
@@ -525,6 +588,18 @@ function correoHTML(datos,res,brechas){
 
   const fila = arr=>`<tr>${arr.map(tarjeta).join("")}</tr>`;
   const chip = a=>`<span style="display:inline-block;font-size:11.5px;color:#fff;background:${FACTORES[a].hex};border-radius:20px;padding:4px 11px;margin:0 5px 5px 0">${esc(a)}</span>`;
+
+  /* Lo que dice que hace para sostener cada motivador que eligió */
+  const conducta = a=>{
+    const A = FACTORES[a], txt = (conductas[a]||"").trim();
+    if(!txt) return "";
+    return `<tr><td style="padding:0 0 8px">
+      <table width="100%" cellpadding="0" cellspacing="0" style="background:${A.bg};border:1px solid ${A.bd};border-radius:10px">
+        <tr><td style="padding:11px 14px;font-family:Arial,sans-serif">
+          <div style="font-size:9.5px;letter-spacing:1.1px;font-weight:bold;color:${A.hex};padding-bottom:4px">${a.toUpperCase()} · QUÉ DICE QUE HACE</div>
+          <div style="font-size:12.5px;color:#453F35;line-height:1.55">${esc(txt).replace(/\n/g,"<br>")}</div>
+        </td></tr></table></td></tr>`;
+  };
 
   const avisoBrecha = brechas.length ? `
     <tr><td style="padding:12px 18px 0">
@@ -576,7 +651,8 @@ function correoHTML(datos,res,brechas){
 
     <tr><td style="padding:14px 18px 0">
       <div style="font-size:10px;letter-spacing:1.4px;color:#1F4E78;font-weight:bold;padding-bottom:7px">LO QUE DICE QUE LO MANTIENE MOTIVADO</div>
-      <div>${elegidos.map(chip).join("")}</div></td></tr>
+      <div>${elegidos.map(chip).join("")}</div>
+      <table width="100%" cellpadding="0" cellspacing="0" style="padding-top:8px">${elegidos.map(conducta).join("")}</table></td></tr>
     ${avisoBrecha}
     ${comentario}
 
@@ -591,7 +667,8 @@ function correoHTML(datos,res,brechas){
     <tr><td align="center" style="padding:10px 18px 20px;font-size:10px;color:#A39C8C;letter-spacing:.4px;line-height:1.6">
       Niveles sobre el promedio de la escala: Alto 4.1-5.0 · Medio alto 3.1-4.0 · Medio 2.1-3.0 · Bajo 1.0-2.0.<br>
       Los bloques tienen 4 o 5 afirmaciones, por eso el nivel se lee sobre el promedio y no sobre la suma.<br>
-      El detalle de las ${TOTAL_P} respuestas queda en la hoja de registro.<br><br>
+      El detalle de las ${TOTAL_P} respuestas y las conductas declaradas quedan en la hoja de registro.<br>
+      Quien contesta no ve el nombre de los factores mientras responde: los bloques van sin título.<br><br>
       Instrumento de autopercepción: muestra qué motivadores están presentes y cuáles no, no califica ni etiqueta a la persona.<br>
       No es una prueba psicométrica validada ni sirve para evaluar el desempeño.<br>
       Famo Alimentos · Talento Humano · Hecho por Diego Muñoz</td></tr>
